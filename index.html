@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PixelForge — Free Browser Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #14101f;
+    --bg2: #1c1730;
+    --card: #211b38;
+    --card-border: #332a54;
+    --amber: #ffb703;
+    --magenta: #ff3d81;
+    --text: #f2eefb;
+    --muted: #9088ad;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .pixel { font-family: 'Press Start 2P', monospace; }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--card-border);
+    position: sticky;
+    top: 0;
+    background: rgba(20,16,31,0.92);
+    backdrop-filter: blur(8px);
+    z-index: 20;
+  }
+  .logo {
+    font-size: 1rem;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo .cart {
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, var(--amber), var(--magenta));
+    border-radius: 5px;
+    position: relative;
+  }
+  .logo .cart::after {
+    content: '';
+    position: absolute;
+    top: 6px; left: 6px; right: 6px; bottom: 10px;
+    background: var(--bg);
+    border-radius: 2px;
+  }
+  .logo span { color: var(--amber); }
+  nav .admin-link {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid var(--card-border);
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: none;
+  }
+  nav .admin-link:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 70px 20px 50px;
+    background:
+      radial-gradient(ellipse 500px 300px at 20% 0%, rgba(255,61,129,0.15), transparent),
+      radial-gradient(ellipse 500px 300px at 80% 20%, rgba(255,183,3,0.12), transparent);
+  }
+  .hero .eyebrow {
+    font-size: 0.65rem;
+    color: var(--amber);
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-size: 1.5rem;
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .hero h1 .hl { color: var(--magenta); }
+  .hero p.sub {
+    color: var(--muted);
+    margin-top: 20px;
+    font-size: 0.95rem;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: 'Inter';
+  }
+
+  /* GAME GRID */
+  .section-label {
+    max-width: 1100px;
+    margin: 40px auto 18px;
+    padding: 0 20px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .grid {
+    max-width: 1100px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+  .game-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+    position: relative;
+  }
+  .game-card:hover { transform: translateY(-4px); border-color: var(--amber); }
+  .game-card .thumb {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, #2a2350, #1c1730);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .game-card .thumb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 3px);
+  }
+  .game-card .info { padding: 12px 14px; }
+  .game-card h3 { font-size: 0.85rem; margin-bottom: 2px; }
+  .game-card p { font-size: 0.7rem; color: var(--muted); }
+
+  .empty-state {
+    max-width: 1100px;
+    margin: 0 auto 60px;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* PLAY MODAL */
+  #playModal {
+    position: fixed; inset: 0;
+    background: rgba(10,8,16,0.96);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    flex-direction: column;
+  }
+  #playModal.show { display: flex; }
+  #playModal .play-header {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+  }
+  #playModal .play-header h3 { font-size: 0.9rem; }
+  #playModal .close-btn {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  #playModal iframe {
+    width: 100%;
+    max-width: 900px;
+    flex: 1;
+    border: none;
+    border-radius: 10px;
+    background: #000;
+  }
+
+  /* ADMIN MODAL */
+  #adminModal {
+    position: fixed; inset: 0;
+    background: rgba(10,8,16,0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  #adminModal.show { display: flex; }
+  .admin-box {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 26px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .admin-box h2 { font-size: 1rem; margin-bottom: 18px; }
+  .field { margin-bottom: 14px; }
+  .field label { font-size: 0.78rem; color: var(--muted); display: block; margin-bottom: 6px; }
+  .field input[type="text"], .field input[type="email"], .field input[type="password"] {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    padding: 11px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .field input[type="file"] {
+    width: 100%;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(90deg, var(--magenta), var(--amber));
+    color: #14101f;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary {
+    width: 100%;
+    padding: 11px;
+    background: none;
+    border: 1px solid var(--card-border);
+    color: var(--muted);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  #adminMsg { font-size: 0.82rem; margin-top: 12px; text-align: center; min-height: 18px; }
+  #adminMsg.error { color: #ff6b6b; }
+  #adminMsg.success { color: #6cff9c; }
+
+  .admin-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .admin-panel-header button.logout {
+    background: none; border: none; color: var(--muted);
+    font-size: 0.78rem; text-decoration: underline; cursor: pointer;
+  }
+
+  .uploaded-list { margin-top: 20px; }
+  .uploaded-list li {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg2);
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+  }
+  .uploaded-list button {
+    background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 0.9rem;
+  }
+
+  footer {
+    text-align: center;
+    color: #4a4266;
+    font-size: 0.75rem;
+    padding: 24px;
+    border-top: 1px solid var(--card-border);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo pixel"><div class="cart"></div>Pixel<span>Forge</span></div>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow pixel">PRESS START</div>
+  <h1 class="pixel">Free browser games. <span class="hl">No installs.</span> No waiting.</h1>
+  <p class="sub">A growing shelf of instant-play games — new cartridges added regularly.</p>
+</section>
+
+<div class="section-label pixel">// LIBRARY</div>
+<div class="grid" id="gameGrid"></div>
+<div class="empty-state" id="emptyState" style="display:none;">No games uploaded yet — check back soon.</div>
+
+<div id="playModal">
+  <div class="play-header">
+    <h3 class="pixel" id="playTitle"></h3>
+    <button class="close-btn" id="closePlayBtn">✕</button>
+  </div>
+  <iframe id="playFrame" src=""></iframe>
+</div>
+
+<div id="adminModal">
+  <div class="admin-box" id="adminBoxContent">
+    <!-- filled by JS: login form or panel -->
+  </div>
+</div>
+
+<footer>PixelForge — games run entirely in your browser.
+  <span id="secretSpot" style="display:inline-block; width:44px; height:44px; vertical-align:middle;"></span>
+</footer>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+<script>
+  // ============================================
+  // FIREBASE CONFIG — REPLACE WITH YOUR OWN VALUES
+  // Get these from: Firebase Console → Project Settings → General → Your apps
+  // ============================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyAHSdHeekhTtkk7DiSG1pWcFN9JvHqru5w",
+    authDomain: "my-game-4d4f9.firebaseapp.com",
+    projectId: "my-game-4d4f9",
+    storageBucket: "my-game-4d4f9.firebasestorage.app",
+    messagingSenderId: "863394371338",
+    appId: "1:863394371338:web:54e010af82008a5b42ccf3"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  // ---------- PUBLIC: LOAD GAMES ----------
+  const gameGrid = document.getElementById('gameGrid');
+  const emptyState = document.getElementById('emptyState');
+
+  function loadGames() {
+    db.collection('games').orderBy('createdAt', 'desc').get()
+      .then(snapshot => {
+        gameGrid.innerHTML = '';
+        if (snapshot.empty) {
+          emptyState.style.display = 'block';
+          return;
+        }
+        emptyState.style.display = 'none';
+        snapshot.forEach(doc => {
+          const g = doc.data();
+          const card = document.createElement('div');
+          card.className = 'game-card';
+          card.innerHTML = `
+            <div class="thumb">🕹️</div>
+            <div class="info">
+              <h3>${escapeHtml(g.name)}</h3>
+              <p>Play now</p>
+            </div>
+          `;
+          card.addEventListener('click', () => openGame(g.name, g.fileUrl));
+          gameGrid.appendChild(card);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        emptyState.textContent = 'Could not load games. Check your Firebase config.';
+        emptyState.style.display = 'block';
+      });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ---------- PLAY MODAL ----------
+  const playModal = document.getElementById('playModal');
+  const playFrame = document.getElementById('playFrame');
+  const playTitle = document.getElementById('playTitle');
+
+  function openGame(name, url) {
+    playTitle.textContent = name;
+    playFrame.src = url;
+    playModal.classList.add('show');
+  }
+  document.getElementById('closePlayBtn').addEventListener('click', () => {
+    playModal.classList.remove('show');
+    playFrame.src = '';
+  });
+
+  // ---------- ADMIN MODAL ----------
+  const adminModal = document.getElementById('adminModal');
+  const adminBoxContent = document.getElementById('adminBoxContent');
+
+  // ---------- SECRET ADMIN ACCESS: tap the invisible spot in footer 3 times within 2 seconds ----------
+  let secretTapCount = 0;
+  let secretTapTimer = null;
+  document.getElementById('secretSpot').addEventListener('click', () => {
+    secretTapCount++;
+    if (secretTapTimer) clearTimeout(secretTapTimer);
+    secretTapTimer = setTimeout(() => { secretTapCount = 0; }, 2000);
+    if (secretTapCount >= 3) {
+      secretTapCount = 0;
+      adminModal.classList.add('show');
+      renderAdminModal();
+    }
+  });
+  adminModal.addEventListener('click', (e) => {
+    if (e.target === adminModal) adminModal.classList.remove('show');
+  });
+
+  function renderAdminModal() {
+    const user = auth.currentUser;
+    if (user) {
+      renderUploadPanel();
+    } else {
+      renderLoginForm();
+    }
+  }
+
+  function renderLoginForm() {
+    adminBoxContent.innerHTML = `
+      <h2 class="pixel">Admin Login</h2>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="loginEmail">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPassword">
+      </div>
+      <button class="btn-primary" id="loginBtn">Log In</button>
+      <button class="btn-secondary" id="cancelAdminBtn">Cancel</button>
+      <div id="adminMsg"></div>
+    `;
+    document.getElementById('cancelAdminBtn').addEventListener('click', () => adminModal.classList.remove('show'));
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const msg = document.getElementById('adminMsg');
+      msg.textContent = 'Logging in...';
+      msg.className = '';
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => renderUploadPanel())
+        .catch(err => {
+          msg.textContent = err.message;
+          msg.className = 'error';
+        });
+    });
+  }
+
+  function renderUploadPanel() {
+    adminBoxContent.innerHTML = `
+      <div class="admin-panel-header">
+        <h2 class="pixel">Upload Game</h2>
+        <button class="logout" id="logoutBtn">Log out</button>
+      </div>
+      <div class="field">
+        <label>Game name</label>
+        <input type="text" id="gameName" placeholder="e.g. Merge2048">
+      </div>
+      <div class="field">
+        <label>Game file (single .html file)</label>
+        <input type="file" id="gameFile" accept=".html">
+      </div>
+      <button class="btn-primary" id="uploadBtn">Upload & Publish</button>
+      <div id="adminMsg"></div>
+      <ul class="uploaded-list" id="uploadedList"></ul>
+      <button class="btn-secondary" id="closeAdminBtn">Close</button>
+    `;
+    document.getElementById('closeAdminBtn').addEventListener('click', () => adminModal.classList.remove('show'));
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      auth.signOut().then(() => renderLoginForm());
+    });
+    document.getElementById('uploadBtn').addEventListener('click', uploadGame);
+    loadUploadedList();
+  }
+
+  function uploadGame() {
+    const name = document.getElementById('gameName').value.trim();
+    const fileInput = document.getElementById('gameFile');
+    const file = fileInput.files[0];
+    const msg = document.getElementById('adminMsg');
+    const btn = document.getElementById('uploadBtn');
+
+    if (!name || !file) {
+      msg.textContent = 'Please enter a name and select a file.';
+      msg.className = 'error';
+      return;
+    }
+
+    btn.disabled = true;
+    msg.textContent = 'Uploading...';
+    msg.className = '';
+
+    const storageRef = storage.ref(`games/${Date.now()}_${file.name}`);
+    storageRef.put(file)
+      .then(snapshot => snapshot.ref.getDownloadURL())
+      .then(url => {
+        return db.collection('games').add({
+          name: name,
+          fileUrl: url,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      })
+      .then(() => {
+        msg.textContent = 'Published! Now live for everyone.';
+        msg.className = 'success';
+        document.getElementById('gameName').value = '';
+        fileInput.value = '';
+        loadGames();
+        loadUploadedList();
+      })
+      .catch(err => {
+        console.error(err);
+        msg.textContent = 'Error: ' + err.message;
+        msg.className = 'error';
+      })
+      .finally(() => { btn.disabled = false; });
+  }
+
+  function loadUploadedList() {
+    const list = document.getElementById('uploadedList');
+    if (!list) return;
+    db.collection('games').orderBy('createdAt', 'desc').get()
+      .then(snapshot => {
+        list.innerHTML = '';
+        snapshot.forEach(doc => {
+          const g = doc.data();
+          const li = document.createElement('li');
+          li.innerHTML = `<span>${escapeHtml(g.name)}</span>`;
+          const delBtn = document.createElement('button');
+          delBtn.textContent = '✕';
+          delBtn.onclick = () => {
+            if (confirm(`Delete "${g.name}"?`)) {
+              db.collection('games').doc(doc.id).delete().then(() => {
+                loadGames();
+                loadUploadedList();
+              });
+            }
+          };
+          li.appendChild(delBtn);
+          list.appendChild(li);
+        });
+      });
+  }
+
+  // Init
+  loadGames();
+</script>
+
+</body>
+</html>
