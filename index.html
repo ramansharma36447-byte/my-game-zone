@@ -327,13 +327,14 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 
 <script>
+  // NEW FIREBASE CONFIG INCLUDED HERE
   const firebaseConfig = {
-    apiKey: "AIzaSyAHSdHeekhTtkk7DiSG1pWcFN9JvHqru5w",
-    authDomain: "my-game-4d4f9.firebaseapp.com",
-    projectId: "my-game-4d4f9",
-    storageBucket: "my-game-4d4f9.firebasestorage.app",
-    messagingSenderId: "863394371338",
-    appId: "1:863394371338:web:54e010af82008a5b42ccf3"
+    apiKey: "AIzaSyDXHnyAUPOYd45RCYjienLhbFviUCE5JS4",
+    authDomain: "game-2e42e.firebaseapp.com",
+    projectId: "game-2e42e",
+    storageBucket: "game-2e42e.firebasestorage.app",
+    messagingSenderId: "323139672747",
+    appId: "1:323139672747:web:205c4b9fcd214791dfb5ee"
   };
 
   firebase.initializeApp(firebaseConfig);
@@ -450,7 +451,6 @@
       msg.textContent = 'Logging in...';
       msg.className = '';
       
-      // Creating the user if it doesn't exist, otherwise signing in
       auth.signInWithEmailAndPassword(email, password)
         .then(() => renderUploadPanel())
         .catch(err => {
