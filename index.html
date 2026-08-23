@@ -3,169 +3,268 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PixelForge — Free Browser Games & Rewards</title>
+<title>PixelForge — Free Browser Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
-  :root { --bg: #14101f; --bg2: #1c1730; --card: #211b38; --card-border: #332a54; --amber: #ffb703; --magenta: #ff3d81; --text: #f2eefb; --muted: #9088ad; --green: #00ff87; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+    font-family: 'Inter', sans-serif;
+    background: #14101f;
+    color: #f2eefb;
+    min-height: 100vh;
+    scroll-behavior: smooth;
+  }
+  :root {
+    --bg: #14101f;
+    --bg2: #1c1730;
+    --card: #211b38;
+    --card-border: #332a54;
+    --amber: #ffb703;
+    --magenta: #ff3d81;
+    --text: #f2eefb;
+    --muted: #9088ad;
+  }
   .pixel { font-family: 'Press Start 2P', monospace; }
-  
-  nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(20,16,31,0.95); backdrop-filter: blur(10px); z-index: 20; }
-  .logo { font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
-  .logo .cart { width: 24px; height: 24px; background: linear-gradient(135deg, var(--amber), var(--magenta)); border-radius: 5px; position: relative; }
-  .logo .cart::after { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 8px; background: var(--bg); border-radius: 2px; }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--card-border);
+    position: sticky;
+    top: 0;
+    background: rgba(20,16,31,0.98);
+    backdrop-filter: blur(10px);
+    z-index: 50;
+    width: 100%;
+  }
+  .logo {
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .logo .cart {
+    width: 22px; height: 22px;
+    background: linear-gradient(135deg, var(--amber), var(--magenta));
+    border-radius: 4px;
+    position: relative;
+  }
+  .logo .cart::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px; right: 4px; bottom: 6px;
+    background: var(--bg);
+    border-radius: 2px;
+  }
   .logo span { color: var(--amber); }
 
-  .nav-links { display: flex; gap: 15px; align-items: center; }
-  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--amber); }
+  .auth-btn {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    cursor: pointer;
+  }
 
-  .nav-right { display: flex; align-items: center; gap: 8px; }
-  .user-coins-badge { background: var(--bg2); border: 1px solid var(--card-border); padding: 6px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; color: var(--amber); transition: transform 0.2s; }
-  .user-coins-badge.pop { transform: scale(1.15); background: var(--amber); color: #000; }
-  .auth-btn { background: var(--card); border: 1px solid var(--card-border); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; }
-  
-  .hero { text-align: center; padding: 60px 20px 40px; background: radial-gradient(ellipse 600px 300px at 50% 0%, rgba(255,61,129,0.18), transparent), radial-gradient(ellipse 600px 300px at 20% 50%, rgba(255,183,3,0.12), transparent); }
-  .hero .eyebrow { font-size: 0.6rem; color: var(--amber); letter-spacing: 2px; margin-bottom: 14px; }
-  .hero h1 { font-size: 1.8rem; font-weight: 800; line-height: 1.3; max-width: 600px; margin: 0 auto; }
+  .hero {
+    text-align: center;
+    padding: 40px 16px 30px;
+    background: radial-gradient(ellipse 500px 250px at 50% 0%, rgba(255,61,129,0.15), transparent);
+  }
+  .hero .eyebrow { font-size: 0.55rem; color: var(--amber); letter-spacing: 2px; margin-bottom: 10px; }
+  .hero h1 { font-size: 1.5rem; font-weight: 800; line-height: 1.3; max-width: 500px; margin: 0 auto; }
   .hero h1 .hl { color: var(--magenta); }
-  .hero p.sub { color: var(--muted); margin-top: 16px; font-size: 0.9rem; max-width: 450px; margin-left: auto; margin-right: auto; }
-  
-  .features-container { max-width: 700px; margin: 0 auto 35px; padding: 0 20px; display: flex; flex-direction: column; gap: 15px; }
-  .feature-card { background: linear-gradient(135deg, #211b38, #2d2350); border: 1px solid var(--card-border); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; }
-  .feature-card.amber-border { border-color: var(--amber); }
-  .feature-card.magenta-border { border-color: var(--magenta); }
-  .feature-info h4 { font-size: 0.8rem; color: var(--amber); margin-bottom: 3px; }
-  .feature-card.magenta-border .feature-info h4 { color: var(--magenta); }
-  .feature-info p { font-size: 0.7rem; color: var(--muted); }
-  .action-btn { background: linear-gradient(90deg, var(--amber), #ff9f0a); color: #14101f; border: none; padding: 9px 16px; border-radius: 10px; font-weight: 700; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: 0.1s; }
-  .action-btn:active { transform: scale(0.95); }
-  .feature-card.magenta-border .action-btn { background: linear-gradient(90deg, var(--magenta), #ff6b9e); color: #fff; }
-  
-  .section-label { max-width: 1100px; margin: 40px auto 16px; padding: 0 20px; font-size: 0.75rem; color: var(--muted); letter-spacing: 1px; }
-  .grid { max-width: 1100px; margin: 0 auto 40px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
-  .game-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
-  .game-card:hover { transform: translateY(-3px); border-color: var(--amber); }
-  .game-card .thumb { width: 100%; aspect-ratio: 4/3; background: linear-gradient(135deg, #2a2350, #1c1730); display: flex; align-items: center; justify-content: center; font-size: 2rem; background-size: cover; background-position: center; }
-  .game-card .info { padding: 10px 12px; }
-  .game-card h3 { font-size: 0.8rem; margin-bottom: 2px; }
-  .game-card p { font-size: 0.65rem; color: var(--muted); }
-  
-  /* REDEEM STORE */
-  .redeem-section { max-width: 1100px; margin: 60px auto; padding: 0 20px; border-top: 1px solid var(--card-border); padding-top: 40px; }
-  .store-header { text-align: center; margin-bottom: 25px; }
-  .store-header h2 { font-size: 1.2rem; color: var(--green); margin-bottom: 8px; }
-  .store-header p { font-size: 0.8rem; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.5; }
-  .store-header .highlight-text { color: var(--amber); font-weight: 600; }
-  .redeem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
-  .redeem-item { background: linear-gradient(145deg, #1c1730, #161226); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; text-align: center; transition: transform 0.2s; }
-  .redeem-item:hover { transform: translateY(-4px); border-color: var(--green); }
-  .redeem-icon { font-size: 2.5rem; margin-bottom: 12px; }
-  .redeem-item h3 { font-size: 0.9rem; margin-bottom: 6px; }
-  .redeem-price { display: inline-block; background: rgba(0,255,135,0.1); color: var(--green); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 15px; border: 1px solid rgba(0,255,135,0.3); }
-  .redeem-btn { width: 100%; background: linear-gradient(90deg, #00ff87, #60efff); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
-  
-  .empty-state { text-align: center; color: var(--muted); padding: 40px; font-size: 0.85rem; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(10,8,16,0.9); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-  .modal-overlay.show { display: flex; }
-  .modal-box { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; }
-  .modal-box h2 { font-size: 0.95rem; margin-bottom: 16px; }
-  .field { margin-bottom: 12px; }
-  .field label { font-size: 0.75rem; color: var(--muted); display: block; margin-bottom: 5px; }
-  .field input { width: 100%; background: var(--bg2); border: 1px solid var(--card-border); color: var(--text); padding: 10px; border-radius: 8px; font-size: 0.85rem; }
-  .btn-primary { width: 100%; padding: 12px; background: linear-gradient(90deg, var(--magenta), var(--amber)); color: #14101f; border: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 6px; }
-  
-  .btn-google { width: 100%; padding: 12px; background: #fff; color: #333; border: none; border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .btn-google img { width: 18px; height: 18px; }
+  .hero p.sub { color: var(--muted); margin-top: 12px; font-size: 0.82rem; max-width: 400px; margin-left: auto; margin-right: auto; }
 
-  .btn-secondary { width: 100%; padding: 10px; background: none; border: 1px solid var(--card-border); color: var(--muted); border-radius: 10px; font-size: 0.8rem; cursor: pointer; margin-top: 6px; }
-  .divider { text-align: center; color: var(--muted); font-size: 0.7rem; margin: 12px 0; position: relative; }
-  .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--card-border); }
+  .section-label {
+    max-width: 1000px;
+    margin: 30px auto 12px;
+    padding: 0 16px;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .grid {
+    max-width: 1000px;
+    margin: 0 auto 90px; /* extra bottom space so bottom nav doesn't cover last row */
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .game-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .game-card:hover { border-color: var(--amber); }
+  .game-card .thumb {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, #2a2350, #1c1730);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    background-size: cover;
+    background-position: center;
+  }
+  .game-card .info { padding: 10px; }
+  .game-card h3 { font-size: 0.75rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .game-card p { font-size: 0.6rem; color: var(--muted); }
+
+  .empty-state { text-align: center; color: var(--muted); padding: 30px; font-size: 0.8rem; }
+
+  /* MODALS */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,8,16,0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 16px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    max-width: 360px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-box h2 { font-size: 0.9rem; margin-bottom: 14px; }
+  .field { margin-bottom: 10px; }
+  .field label { font-size: 0.7rem; color: var(--muted); display: block; margin-bottom: 4px; }
+  .field input {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    padding: 9px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+  }
+  .btn-primary {
+    width: 100%;
+    padding: 11px;
+    background: linear-gradient(90deg, var(--magenta), var(--amber));
+    color: #14101f;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  .btn-google {
+    width: 100%;
+    padding: 10px;
+    background: #fff;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-secondary {
+    width: 100%;
+    padding: 9px;
+    background: none;
+    border: 1px solid var(--card-border);
+    color: var(--muted);
+    border-radius: 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  .divider { text-align: center; color: var(--muted); font-size: 0.65rem; margin: 10px 0; position: relative; }
+  .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 38%; height: 1px; background: var(--card-border); }
   .divider::before { left: 0; } .divider::after { right: 0; }
 
-  .msg { font-size: 0.75rem; margin-top: 10px; text-align: center; }
+  .msg { font-size: 0.7rem; margin-top: 8px; text-align: center; }
   .msg.error { color: #ff6b6b; }
   .msg.success { color: #6cff9c; }
-  #playModal iframe { width: 100%; max-width: 900px; flex: 1; border: none; border-radius: 10px; background: #000; }
+
+  #playModal iframe { width: 100%; max-width: 850px; flex: 1; border: none; border-radius: 8px; background: #000; }
   #playModal { flex-direction: column; }
-  .play-header { width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center; padding: 14px; }
-  .close-btn { background: var(--card); border: 1px solid var(--card-border); color: var(--text); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; }
-  footer { text-align: center; color: #4a4266; font-size: 0.7rem; padding: 25px; border-top: 1px solid var(--card-border); margin-top: 40px; }
+  .play-header { width: 100%; max-width: 850px; display: flex; justify-content: space-between; align-items: center; padding: 10px; }
+  .close-btn { background: var(--card); border: 1px solid var(--card-border); color: var(--text); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; }
+
+  footer { text-align: center; color: #4a4266; font-size: 0.65rem; padding: 20px; padding-bottom: 90px; border-top: 1px solid var(--card-border); margin-top: 30px; }
+
+  /* ===== BOTTOM NAVIGATION BAR (separate, mobile-app style) ===== */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(20,16,31,0.98);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+    z-index: 60;
+  }
+  .bottom-nav button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.6rem;
+    cursor: pointer;
+    padding: 4px 10px;
+  }
+  .bottom-nav button .icon { font-size: 1.1rem; }
+  .bottom-nav button.active { color: var(--amber); }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo pixel"><div class="cart"></div>Pixel<span>Forge</span></div>
-  <div class="nav-links">
-    <a href="#gameGrid">Games</a>
-    <a href="#store">Reward Store</a>
-  </div>
-  <div class="nav-right">
-    <div class="user-coins-badge" id="coinBadge">🪙 <span id="coinVal">0</span> Coins</div>
-    <button class="auth-btn pixel" id="authNavBtn" onclick="openAuthModal()">LOGIN</button>
-  </div>
+  <button class="auth-btn pixel" id="authNavBtn" onclick="openAuthModal()">LOGIN</button>
 </nav>
 
 <section class="hero">
   <div class="eyebrow pixel">PRESS START</div>
-  <h1>Free browser games. <span class="hl">No installs.</span> Play & Earn.</h1>
-  <p class="sub">Instant-play browser games. Collect daily coins, refer friends, and unlock rewards.</p>
+  <h1>Free browser games. <span class="hl">No installs.</span></h1>
+  <p class="sub">Instant-play browser games. Login and start playing.</p>
 </section>
 
-<!-- FEATURES SECTION -->
-<div class="features-container">
-  <div class="feature-card amber-border">
-    <div class="feature-info"><h4 class="pixel">🎁 Daily Reward</h4><p>Login & claim 100 free coins!</p></div>
-    <button class="action-btn pixel" onclick="claimDailyReward()">CLAIM</button>
-  </div>
-  <div class="feature-card magenta-border">
-    <div class="feature-info"><h4 class="pixel">🚀 Refer & Earn</h4><p>Share with friends & get +500 coins!</p></div>
-    <button class="action-btn pixel" onclick="referAndEarn()">SHARE</button>
-  </div>
-</div>
-
-<div class="section-label pixel" id="gameGrid">// GAME LIBRARY</div>
-<div class="grid" id="gameGridContainer"></div>
+<div class="section-label pixel" id="gameGridContainer">// GAME LIBRARY</div>
+<div class="grid" id="gameGrid"></div>
 <div class="empty-state" id="emptyState" style="display:none;">No games uploaded yet — check back soon.</div>
-
-<!-- UNLOCKED REDEEM STORE -->
-<div class="redeem-section" id="store">
-  <div class="store-header">
-    <h2 class="pixel">🏆 Reward Store</h2>
-    <p>Use your hard-earned coins to claim real rewards. 10,000 Coins = ₹100.<br>
-    <span class="highlight-text">Your redeem codes will be sent directly to your registered email within 24 Hours!</span></p>
-  </div>
-  <div class="redeem-grid">
-    <div class="redeem-item">
-      <div class="redeem-icon">🎮</div>
-      <h3>₹100 Google Play Code</h3>
-      <div class="redeem-price">🪙 10,000 Coins</div>
-      <button class="redeem-btn pixel" onclick="requestRedeem('Google Play ₹100', 10000)">REDEEM</button>
-    </div>
-    <div class="redeem-item">
-      <div class="redeem-icon">🔥</div>
-      <h3>Free Fire 100 Diamonds</h3>
-      <div class="redeem-price">🪙 10,000 Coins</div>
-      <button class="redeem-btn pixel" onclick="requestRedeem('Free Fire 100 Diamonds', 10000)">REDEEM</button>
-    </div>
-    <div class="redeem-item">
-      <div class="redeem-icon">🛒</div>
-      <h3>₹200 Amazon Voucher</h3>
-      <div class="redeem-price">🪙 20,000 Coins</div>
-      <button class="redeem-btn pixel" onclick="requestRedeem('Amazon ₹200', 20000)">REDEEM</button>
-    </div>
-  </div>
-</div>
 
 <div class="modal-overlay" id="playModal">
   <div class="play-header">
-    <h3 id="playTitle" style="font-size:0.85rem;"></h3>
+    <h3 id="playTitle" style="font-size:0.8rem;"></h3>
     <button class="close-btn" onclick="closePlayModal()">✕</button>
   </div>
-  <iframe id="playFrame"></iframe>
+  <!-- sandbox: uploaded game HTML cannot read parent page/cookies/storage -->
+  <iframe id="playFrame" sandbox="allow-scripts"></iframe>
 </div>
 
 <!-- AUTH MODAL -->
@@ -173,7 +272,7 @@
   <div class="modal-box">
     <h2 id="authTitle" class="pixel">Login / Register</h2>
     <button class="btn-google" onclick="loginWithGoogle()">
-      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.19-1.84H9v3.49h4.84c-.21 1.13-.86 2.08-1.82 2.72v2.26h2.94c1.72-1.58 2.72-3.9 2.72-6.63z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.94-2.26c-.81.54-1.84.86-3.02.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33C2.45 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.75c-.19-.54-.3-1.12-.3-1.75s.11-1.21.3-1.75V4.92H.96C.35 6.13 0 7.5 0 9s.35 2.87.96 4.08l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.45 2.02.96 4.92l3.01 2.33c.71-2.13 2.69-3.67 5.03-3.67z"/></svg>
+      <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.19-1.84H9v3.49h4.84c-.21 1.13-.86 2.08-1.82 2.72v2.26h2.94c1.72-1.58 2.72-3.9 2.72-6.63z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.94-2.26c-.81.54-1.84.86-3.02.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33C2.45 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.75c-.19-.54-.3-1.12-.3-1.75s.11-1.21.3-1.75V4.92H.96C.35 6.13 0 7.5 0 9s.35 2.87.96 4.08l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.45 2.02.96 4.92l3.01 2.33c.71-2.13 2.69-3.67 5.03-3.67z"/></svg>
       Continue with Google
     </button>
     <div class="divider">OR EMAIL</div>
@@ -191,8 +290,21 @@
 </div>
 
 <footer>PixelForge — games run entirely in your browser.
-  <span id="secretSpot" style="display:inline-block; width:44px; height:44px; vertical-align:middle;"></span>
+  <span id="secretSpot" style="display:inline-block; width:40px; height:40px; vertical-align:middle;"></span>
 </footer>
+
+<!-- ===== SEPARATE BOTTOM NAV BAR (games ke liye) ===== -->
+<div class="bottom-nav">
+  <button class="active" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+    <span class="icon">🏠</span>Home
+  </button>
+  <button onclick="document.getElementById('gameGridContainer').scrollIntoView({behavior:'smooth'})">
+    <span class="icon">🕹️</span>Games
+  </button>
+  <button onclick="openAuthModal()">
+    <span class="icon">👤</span>Account
+  </button>
+</div>
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -216,49 +328,26 @@
   let currentUser = null;
   let isRegistering = false;
 
-  window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'EARN_COINS') {
-      const coinsEarned = parseInt(event.data.amount);
-      if (coinsEarned > 0) addCoinsFromGame(coinsEarned);
-    }
-  });
+  function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str == null ? '' : String(str); return d.innerHTML; }
 
-  function addCoinsFromGame(amount) {
-    if (!currentUser) { alert("Please login to save coins!"); return; }
-    if (!currentUser.emailVerified && !currentUser.providerData.some(p => p.providerId === 'google.com')) { 
-      alert("Please verify your email first!"); return; 
-    }
-    const userRef = db.collection('users').doc(currentUser.uid);
-    db.runTransaction(transaction => {
-      return transaction.get(userRef).then(doc => {
-        if (!doc.exists) throw "User not found";
-        const newCoins = (doc.data().coins || 0) + amount;
-        transaction.update(userRef, { coins: newCoins });
-        return newCoins;
-      });
-    }).then(newCoins => {
-      const badge = document.getElementById('coinBadge');
-      document.getElementById('coinVal').textContent = newCoins;
-      badge.classList.add('pop');
-      setTimeout(() => badge.classList.remove('pop'), 400);
-    }).catch(err => console.error(err));
+  // No coins field anymore — user doc sirf email store karta hai (login tracking ke liye)
+  function ensureUserDoc(user) {
+    const userRef = db.collection('users').doc(user.uid);
+    return userRef.get().then(doc => {
+      if (doc.exists) return;
+      return userRef.set({ email: user.email });
+    });
   }
 
   auth.onAuthStateChanged(user => {
     currentUser = user;
     const authBtn = document.getElementById('authNavBtn');
-    if (user) { 
-      authBtn.textContent = 'LOGOUT'; 
-      fetchUserCoins(user.uid); 
-    } else { 
-      authBtn.textContent = 'LOGIN'; 
-      document.getElementById('coinVal').textContent = '0'; 
-    }
+    authBtn.textContent = user ? 'LOGOUT' : 'LOGIN';
   });
 
   function openAuthModal() { if (currentUser) { auth.signOut(); return; } document.getElementById('authModal').classList.add('show'); }
   function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); }
-  
+
   function toggleAuthMode() {
     isRegistering = !isRegistering;
     document.getElementById('authTitle').textContent = isRegistering ? 'Create Account' : 'User Login';
@@ -267,13 +356,7 @@
 
   function loginWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).then(result => {
-      const user = result.user;
-      db.collection('users').doc(user.uid).get().then(doc => {
-        if (!doc.exists) {
-          db.collection('users').doc(user.uid).set({ email: user.email, coins: 100, lastClaim: '' });
-        }
-      });
+    auth.signInWithPopup(provider).then(result => ensureUserDoc(result.user)).then(() => {
       closeAuthModal();
     }).catch(err => alert(err.message));
   }
@@ -283,83 +366,14 @@
     const pass = document.getElementById('userPassword').value;
     const msg = document.getElementById('authMsg');
     msg.textContent = 'Processing...'; msg.className = 'msg';
-    
-    if (isRegistering) {
-      auth.createUserWithEmailAndPassword(email, pass).then(cred => {
-        cred.user.sendEmailVerification().then(() => {
-          db.collection('users').doc(cred.user.uid).set({ email: email, coins: 0, lastClaim: '' });
-          msg.textContent = 'Verification email sent! Check inbox.';
-          msg.className = 'msg success';
-          setTimeout(() => closeAuthModal(), 3000);
-        });
-      }).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
-    } else {
-      auth.signInWithEmailAndPassword(email, pass).then(cred => {
-        if (!cred.user.emailVerified) {
-          msg.textContent = 'Please verify your email first!';
-          msg.className = 'msg error';
-          return;
-        }
-        closeAuthModal();
-      }).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
-    }
+
+    const promise = isRegistering ? auth.createUserWithEmailAndPassword(email, pass) : auth.signInWithEmailAndPassword(email, pass);
+    promise.then(cred => ensureUserDoc(cred.user)).then(() => {
+      closeAuthModal();
+    }).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
   }
 
-  function fetchUserCoins(uid) {
-    db.collection('users').doc(uid).get().then(doc => {
-      if (doc.exists) { document.getElementById('coinVal').textContent = doc.data().coins || 0; } 
-      else { db.collection('users').doc(uid).set({ coins: 100, lastClaim: '' }); document.getElementById('coinVal').textContent = '100'; }
-    });
-  }
-
-  function claimDailyReward() {
-    if (!currentUser) { alert("Please login first!"); openAuthModal(); return; }
-    const userRef = db.collection('users').doc(currentUser.uid);
-    const today = new Date().toDateString();
-    db.runTransaction(transaction => {
-      return transaction.get(userRef).then(doc => {
-        if (!doc.exists) throw "User data not found!";
-        const data = doc.data();
-        if (data.lastClaim === today) throw "You already claimed your reward today!";
-        const newCoins = (data.coins || 0) + 100;
-        transaction.update(userRef, { coins: newCoins, lastClaim: today });
-        return newCoins;
-      });
-    }).then(newCoins => {
-      document.getElementById('coinVal').textContent = newCoins;
-      alert("🎉 Success! +100 Coins added to your cloud wallet!");
-    }).catch(err => { alert(typeof err === 'string' ? err : err.message); });
-  }
-
-  function referAndEarn() {
-    const refLink = window.location.href;
-    if (navigator.clipboard) { navigator.clipboard.writeText(refLink).then(() => alert("📋 Referral link copied! Share with friends to earn +500 coins.")); } 
-    else { prompt("Copy your referral link:", refLink); }
-  }
-
-  function requestRedeem(itemName, cost) {
-    if (!currentUser) { alert("Please login to redeem items."); openAuthModal(); return; }
-    if (confirm(`Do you want to redeem "${itemName}" for ${cost} Coins?`)) {
-      const userRef = db.collection('users').doc(currentUser.uid);
-      db.runTransaction(transaction => {
-        return transaction.get(userRef).then(doc => {
-          if (!doc.exists) throw "User data not found!";
-          const currentCoins = doc.data().coins || 0;
-          if (currentCoins < cost) throw `Not enough coins! You need ${cost - currentCoins} more coins.`;
-          const newCoins = currentCoins - cost;
-          transaction.update(userRef, { coins: newCoins });
-          const requestRef = db.collection('redeem_requests').doc();
-          transaction.set(requestRef, { uid: currentUser.uid, email: currentUser.email, item: itemName, cost: cost, status: "Pending", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-          return newCoins;
-        });
-      }).then(newCoins => {
-        document.getElementById('coinVal').textContent = newCoins;
-        alert(`✅ Success! Your request for "${itemName}" has been submitted. Check your email within 24 hours.`);
-      }).catch(err => { alert("❌ Error: " + (typeof err === 'string' ? err : err.message)); });
-    }
-  }
-
-  const gameGrid = document.getElementById('gameGridContainer');
+  const gameGrid = document.getElementById('gameGrid');
   const emptyState = document.getElementById('emptyState');
   function loadGames() {
     db.collection('games').orderBy('createdAt', 'desc').get().then(snapshot => {
@@ -370,28 +384,28 @@
         const g = doc.data();
         const card = document.createElement('div');
         card.className = 'game-card';
-        let thumbContent = g.image ? `<div class="thumb" style="background-image: url('${g.image}');"></div>` : `<div class="thumb">🕹️</div>`;
-        card.innerHTML = `${thumbContent}<div class="info"><h3>${escapeHtml(g.name)}</h3><p>Play & Earn</p></div>`;
+        let thumbContent = g.image ? `<div class="thumb" style="background-image: url('${escapeHtml(g.image)}');"></div>` : `<div class="thumb">🕹️</div>`;
+        card.innerHTML = `${thumbContent}<div class="info"><h3>${escapeHtml(g.name)}</h3><p>Play Now</p></div>`;
         card.addEventListener('click', () => openGame(g.name, g.content));
         gameGrid.appendChild(card);
       });
     });
   }
-  function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
-  
-  function openGame(name, content) { 
+
+  function openGame(name, content) {
     if (!currentUser) { alert("You must be logged in to play games!"); openAuthModal(); return; }
-    document.getElementById('playTitle').textContent = name; 
-    document.getElementById('playFrame').srcdoc = content; 
-    document.getElementById('playModal').classList.add('show'); 
+    document.getElementById('playTitle').textContent = name;
+    document.getElementById('playFrame').srcdoc = content;
+    document.getElementById('playModal').classList.add('show');
   }
-  
+
   function closePlayModal() { document.getElementById('playModal').classList.remove('show'); document.getElementById('playFrame').removeAttribute('srcdoc'); }
 
-  // --- ADMIN PANEL WITH DELETE GAME & USERS LIST ---
+  // --- ADMIN PANEL (Manage Games + View Users only) ---
   const adminModal = document.getElementById('adminModal');
   const adminBoxContent = document.getElementById('adminBoxContent');
   let secretTapCount = 0, secretTapTimer = null;
+
   document.getElementById('secretSpot').addEventListener('click', () => {
     secretTapCount++;
     if (secretTapTimer) clearTimeout(secretTapTimer);
@@ -401,25 +415,41 @@
   adminModal.addEventListener('click', (e) => { if (e.target === adminModal) adminModal.classList.remove('show'); });
 
   function renderAdminModal() { const user = auth.currentUser; if (user) renderAdminDashboard(); else renderAdminLogin(); }
-  function renderAdminLogin() { adminBoxContent.innerHTML = `<h2>Admin Login</h2><div class="field"><label>Email</label><input type="email" id="admEmail"></div><div class="field"><label>Password</label><input type="password" id="admPass"></div><button class="btn-primary" onclick="loginAdmin()">Log In</button><button class="btn-secondary" onclick="adminModal.classList.remove('show')">Cancel</button><div class="msg" id="admMsg"></div>`; }
-  function loginAdmin() {
-    auth.signInWithEmailAndPassword(document.getElementById('admEmail').value, document.getElementById('admPass').value)
-      .then(() => renderAdminDashboard()).catch(err => { document.getElementById('admMsg').textContent = err.message; document.getElementById('admMsg').className = 'msg error'; });
+
+  function renderAdminLogin() {
+    adminBoxContent.innerHTML = `
+      <h2>Admin Login</h2>
+      <div class="field"><label>Admin Email</label><input type="email" id="admEmail" placeholder="admin@email.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="admPass" placeholder="••••••••"></div>
+      <button class="btn-primary" onclick="loginAdmin()">Log In</button>
+      <button class="btn-secondary" onclick="adminModal.classList.remove('show')">Cancel</button>
+      <div class="msg" id="admMsg"></div>
+    `;
   }
-  
-  function renderAdminDashboard() { 
+
+  function loginAdmin() {
+    const email = document.getElementById('admEmail').value.trim();
+    const pass = document.getElementById('admPass').value;
+    const msg = document.getElementById('admMsg');
+    msg.textContent = 'Logging in...'; msg.className = 'msg';
+
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(() => renderAdminDashboard())
+      .catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
+  }
+
+  function renderAdminDashboard() {
     adminBoxContent.innerHTML = `
       <h2>Admin Dashboard</h2>
       <button class="btn-primary" onclick="renderUploadSection()" style="margin-bottom:8px;">Upload Game</button>
       <button class="btn-primary" onclick="renderManageGamesSection()" style="margin-bottom:8px; background:linear-gradient(90deg, #ff9f0a, #ffb703);">Manage / Delete Games</button>
       <button class="btn-primary" onclick="renderAllUsersSection()" style="margin-bottom:8px; background:linear-gradient(90deg, #60efff, #00ff87); color:#000;">View Registered Users</button>
-      <button class="btn-primary" onclick="renderRedeemRequestsSection()" style="margin-bottom:8px; background:linear-gradient(90deg, #ff3d81, #ffb703);">View Redeem Requests</button>
       <button class="btn-secondary" onclick="auth.signOut(); adminModal.classList.remove('show');">Log Out</button>
       <button class="btn-secondary" onclick="adminModal.classList.remove('show')">Close</button>
-    `; 
+    `;
   }
-  
-  function renderUploadSection() { 
+
+  function renderUploadSection() {
     adminBoxContent.innerHTML = `
       <h2>Upload Game</h2>
       <div class="field"><label>Game Name</label><input type="text" id="gameName"></div>
@@ -428,16 +458,16 @@
       <button class="btn-primary" onclick="uploadGame()">Publish</button>
       <button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>
       <div class="msg" id="admMsg"></div>
-    `; 
+    `;
   }
-  
+
   function uploadGame() {
     const file = document.getElementById('gameFile').files[0];
     const imageFile = document.getElementById('gameImage').files[0];
     const gameName = document.getElementById('gameName').value;
     const msg = document.getElementById('admMsg');
     if (!file || !gameName) { msg.textContent = "Name and HTML file required."; msg.className = 'msg error'; return; }
-    
+
     msg.textContent = 'Uploading...';
     const saveToDB = (htmlContent, imageBase64) => {
       db.collection('games').add({ name: gameName, content: htmlContent, image: imageBase64, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
@@ -455,11 +485,10 @@
     htmlReader.readAsText(file);
   }
 
-  // --- MANAGE / DELETE GAMES SECTION ---
   function renderManageGamesSection() {
     adminBoxContent.innerHTML = `
       <h2>Manage Games</h2>
-      <div id="gamesListAdmin" style="max-height: 230px; overflow-y: auto; margin-bottom: 12px; font-size:0.75rem;">Loading...</div>
+      <div id="gamesListAdmin" style="max-height: 220px; overflow-y: auto; margin-bottom: 12px; font-size:0.75rem;">Loading...</div>
       <button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>
     `;
     db.collection('games').orderBy('createdAt', 'desc').get().then(snapshot => {
@@ -470,7 +499,8 @@
         const g = doc.data();
         const div = document.createElement('div');
         div.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:var(--bg2); padding:8px 10px; border-radius:6px; margin-bottom:6px;";
-        div.innerHTML = `<span>${escapeHtml(g.name)}</span><button onclick="deleteGame('${doc.id}')" style="background:#ff6b6b; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Delete</button>`;
+        div.innerHTML = `<span>${escapeHtml(g.name)}</span><button style="background:#ff6b6b; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Delete</button>`;
+        div.querySelector('button').addEventListener('click', () => deleteGame(doc.id));
         list.appendChild(div);
       });
     });
@@ -486,11 +516,10 @@
     }
   }
 
-  // --- REGISTERED USERS LIST SECTION ---
   function renderAllUsersSection() {
     adminBoxContent.innerHTML = `
       <h2>Registered Users</h2>
-      <div id="usersListAdmin" style="max-height: 230px; overflow-y: auto; margin-bottom: 12px; font-size:0.75rem;">Loading...</div>
+      <div id="usersListAdmin" style="max-height: 220px; overflow-y: auto; margin-bottom: 12px; font-size:0.75rem;">Loading...</div>
       <button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>
     `;
     db.collection('users').get().then(snapshot => {
@@ -501,32 +530,10 @@
         const u = doc.data();
         const div = document.createElement('div');
         div.style.cssText = "background:var(--bg2); padding:8px 10px; border-radius:6px; margin-bottom:6px;";
-        div.innerHTML = `<b>Email:</b> ${u.email || 'N/A'}<br><b>Coins:</b> <span style="color:var(--amber);">${u.coins || 0}</span>`;
+        div.innerHTML = `<b>Email:</b> ${escapeHtml(u.email || 'N/A')}`;
         list.appendChild(div);
       });
     });
-  }
-
-  function renderRedeemRequestsSection() {
-    adminBoxContent.innerHTML = `<h2>Redeem Requests</h2><div id="requestsList" style="max-height: 230px; overflow-y: auto; margin-bottom: 15px; font-size:0.75rem;">Loading...</div><button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>`;
-    db.collection('redeem_requests').orderBy('timestamp', 'desc').get().then(snapshot => {
-      const list = document.getElementById('requestsList');
-      if (snapshot.empty) { list.innerHTML = '<p style="color:var(--muted);">No pending requests.</p>'; return; }
-      list.innerHTML = '';
-      snapshot.forEach(doc => {
-        const req = doc.data();
-        const div = document.createElement('div');
-        div.style.cssText = "background:var(--bg2); padding:10px; border-radius:8px; margin-bottom:8px;";
-        div.innerHTML = `<b>Email:</b> ${req.email}<br><b>Item:</b> ${req.item}<br><b>Status:</b> <span style="color:${req.status === 'Pending' ? '#ffb703' : '#00ff87'}">${req.status}</span><br>${req.status === 'Pending' ? `<button onclick="markRequestDone('${doc.id}')" style="margin-top:6px; background:var(--card-border); color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Mark Completed</button>` : ''}`;
-        list.appendChild(div);
-      });
-    });
-  }
-
-  function markRequestDone(id) {
-    if (confirm('Mark as completed?')) {
-      db.collection('redeem_requests').doc(id).update({ status: 'Completed' }).then(() => renderRedeemRequestsSection()).catch(err => alert("Error: " + err.message));
-    }
   }
 
   loadGames();
