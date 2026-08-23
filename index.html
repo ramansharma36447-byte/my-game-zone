@@ -3,317 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PixelForge — Free Browser Games</title>
+<title>PixelForge — Free Browser Games & Rewards</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --bg: #14101f;
-    --bg2: #1c1730;
-    --card: #211b38;
-    --card-border: #332a54;
-    --amber: #ffb703;
-    --magenta: #ff3d81;
-    --text: #f2eefb;
-    --muted: #9088ad;
-  }
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  :root { --bg: #14101f; --bg2: #1c1730; --card: #211b38; --card-border: #332a54; --amber: #ffb703; --magenta: #ff3d81; --text: #f2eefb; --muted: #9088ad; --green: #00ff87; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
   .pixel { font-family: 'Press Start 2P', monospace; }
-
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 24px;
-    border-bottom: 1px solid var(--card-border);
-    position: sticky;
-    top: 0;
-    background: rgba(20,16,31,0.92);
-    backdrop-filter: blur(8px);
-    z-index: 20;
-  }
-  .logo {
-    font-size: 1rem;
-    letter-spacing: -0.5px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .logo .cart {
-    width: 26px; height: 26px;
-    background: linear-gradient(135deg, var(--amber), var(--magenta));
-    border-radius: 5px;
-    position: relative;
-  }
-  .logo .cart::after {
-    content: '';
-    position: absolute;
-    top: 6px; left: 6px; right: 6px; bottom: 10px;
-    background: var(--bg);
-    border-radius: 2px;
-  }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: rgba(20,16,31,0.95); backdrop-filter: blur(10px); z-index: 20; }
+  .logo { font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+  .logo .cart { width: 24px; height: 24px; background: linear-gradient(135deg, var(--amber), var(--magenta)); border-radius: 5px; position: relative; }
+  .logo .cart::after { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 8px; background: var(--bg); border-radius: 2px; }
   .logo span { color: var(--amber); }
-
-  .hero {
-    text-align: center;
-    padding: 70px 20px 50px;
-    background:
-      radial-gradient(ellipse 500px 300px at 20% 0%, rgba(255,61,129,0.15), transparent),
-      radial-gradient(ellipse 500px 300px at 80% 20%, rgba(255,183,3,0.12), transparent);
-  }
-  .hero .eyebrow {
-    font-size: 0.65rem;
-    color: var(--amber);
-    letter-spacing: 2px;
-    margin-bottom: 18px;
-  }
-  .hero h1 {
-    font-size: 1.9rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    line-height: 1.3;
-    max-width: 600px;
-    margin: 0 auto;
-  }
+  .nav-right { display: flex; align-items: center; gap: 8px; }
+  .user-coins-badge { background: var(--bg2); border: 1px solid var(--card-border); padding: 6px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; color: var(--amber); transition: transform 0.2s; }
+  .user-coins-badge.pop { transform: scale(1.15); background: var(--amber); color: #000; }
+  .auth-btn { background: var(--card); border: 1px solid var(--card-border); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; }
+  
+  .hero { text-align: center; padding: 60px 20px 40px; background: radial-gradient(ellipse 600px 300px at 50% 0%, rgba(255,61,129,0.18), transparent), radial-gradient(ellipse 600px 300px at 20% 50%, rgba(255,183,3,0.12), transparent); }
+  .hero .eyebrow { font-size: 0.6rem; color: var(--amber); letter-spacing: 2px; margin-bottom: 14px; }
+  .hero h1 { font-size: 1.8rem; font-weight: 800; line-height: 1.3; max-width: 600px; margin: 0 auto; }
   .hero h1 .hl { color: var(--magenta); }
-  .hero p.sub {
-    color: var(--muted);
-    margin-top: 20px;
-    font-size: 0.95rem;
-    max-width: 460px;
-    margin-left: auto;
-    margin-right: auto;
-    font-family: 'Inter';
-  }
-
-  .section-label {
-    max-width: 1100px;
-    margin: 40px auto 18px;
-    padding: 0 20px;
-    font-size: 0.75rem;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
-  .grid {
-    max-width: 1100px;
-    margin: 0 auto 60px;
-    padding: 0 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-  }
-  .game-card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.15s, border-color 0.15s;
-    position: relative;
-  }
-  .game-card:hover { transform: translateY(-4px); border-color: var(--amber); }
-  .game-card .thumb {
-    width: 100%;
-    aspect-ratio: 4/3;
-    background: linear-gradient(135deg, #2a2350, #1c1730);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.2rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .game-card .thumb::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 3px);
-  }
-  .game-card .info { padding: 12px 14px; }
-  .game-card h3 { font-size: 0.85rem; margin-bottom: 2px; }
-  .game-card p { font-size: 0.7rem; color: var(--muted); }
-
-  .empty-state {
-    max-width: 1100px;
-    margin: 0 auto 60px;
-    padding: 60px 20px;
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-
-  #playModal {
-    position: fixed; inset: 0;
-    background: rgba(10,8,16,0.96);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    flex-direction: column;
-  }
-  #playModal.show { display: flex; }
-  #playModal .play-header {
-    width: 100%;
-    max-width: 900px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 16px;
-  }
-  #playModal .play-header h3 { font-size: 0.9rem; }
-  #playModal .close-btn {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    color: var(--text);
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    cursor: pointer;
-  }
-  #playModal iframe {
-    width: 100%;
-    max-width: 900px;
-    flex: 1;
-    border: none;
-    border-radius: 10px;
-    background: #000;
-  }
-
-  #adminModal {
-    position: fixed; inset: 0;
-    background: rgba(10,8,16,0.9);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 20px;
-  }
-  #adminModal.show { display: flex; }
-  .admin-box {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 26px;
-    width: 100%;
-    max-width: 400px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .admin-box h2 { font-size: 1rem; margin-bottom: 18px; }
-  .field { margin-bottom: 14px; }
-  .field label { font-size: 0.78rem; color: var(--muted); display: block; margin-bottom: 6px; }
-  .field input[type="text"], .field input[type="email"], .field input[type="password"] {
-    width: 100%;
-    background: var(--bg2);
-    border: 1px solid var(--card-border);
-    color: var(--text);
-    padding: 11px 12px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-  }
-  .field input[type="file"] {
-    width: 100%;
-    font-size: 0.82rem;
-    color: var(--muted);
-  }
-  .btn-primary {
-    width: 100%;
-    padding: 13px;
-    background: linear-gradient(90deg, var(--magenta), var(--amber));
-    color: #14101f;
-    border: none;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    margin-top: 4px;
-  }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-secondary {
-    width: 100%;
-    padding: 11px;
-    background: none;
-    border: 1px solid var(--card-border);
-    color: var(--muted);
-    border-radius: 10px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    margin-top: 8px;
-  }
-  #adminMsg { font-size: 0.82rem; margin-top: 12px; text-align: center; min-height: 18px; }
-  #adminMsg.error { color: #ff6b6b; }
-  #adminMsg.success { color: #6cff9c; }
-
-  .admin-panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
-  }
-  .admin-panel-header button.logout {
-    background: none; border: none; color: var(--muted);
-    font-size: 0.78rem; text-decoration: underline; cursor: pointer;
-  }
-
-  .uploaded-list { margin-top: 20px; }
-  .uploaded-list li {
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--bg2);
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    font-size: 0.8rem;
-  }
-  .uploaded-list button {
-    background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 0.9rem;
-  }
-
-  footer {
-    text-align: center;
-    color: #4a4266;
-    font-size: 0.75rem;
-    padding: 24px;
-    border-top: 1px solid var(--card-border);
-  }
+  .hero p.sub { color: var(--muted); margin-top: 16px; font-size: 0.9rem; max-width: 450px; margin-left: auto; margin-right: auto; }
+  
+  .features-container { max-width: 700px; margin: 0 auto 35px; padding: 0 20px; display: flex; flex-direction: column; gap: 15px; }
+  .feature-card { background: linear-gradient(135deg, #211b38, #2d2350); border: 1px solid var(--card-border); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .feature-card.amber-border { border-color: var(--amber); }
+  .feature-card.magenta-border { border-color: var(--magenta); }
+  .feature-info h4 { font-size: 0.8rem; color: var(--amber); margin-bottom: 3px; }
+  .feature-card.magenta-border .feature-info h4 { color: var(--magenta); }
+  .feature-info p { font-size: 0.7rem; color: var(--muted); }
+  .action-btn { background: linear-gradient(90deg, var(--amber), #ff9f0a); color: #14101f; border: none; padding: 9px 16px; border-radius: 10px; font-weight: 700; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: 0.1s; }
+  .action-btn:active { transform: scale(0.95); }
+  .feature-card.magenta-border .action-btn { background: linear-gradient(90deg, var(--magenta), #ff6b9e); color: #fff; }
+  
+  .section-label { max-width: 1100px; margin: 40px auto 16px; padding: 0 20px; font-size: 0.75rem; color: var(--muted); letter-spacing: 1px; }
+  .grid { max-width: 1100px; margin: 0 auto 40px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .game-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
+  .game-card:hover { transform: translateY(-3px); border-color: var(--amber); }
+  .game-card .thumb { width: 100%; aspect-ratio: 4/3; background: linear-gradient(135deg, #2a2350, #1c1730); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+  .game-card .info { padding: 10px 12px; }
+  .game-card h3 { font-size: 0.8rem; margin-bottom: 2px; }
+  .game-card p { font-size: 0.65rem; color: var(--muted); }
+  
+  /* REDEEM STORE */
+  .redeem-section { max-width: 1100px; margin: 45px auto; padding: 0 20px; }
+  .store-header { text-align: center; margin-bottom: 25px; }
+  .store-header h2 { font-size: 1.2rem; color: var(--green); margin-bottom: 8px; }
+  .store-header p { font-size: 0.8rem; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.5; }
+  .store-header .highlight-text { color: var(--amber); font-weight: 600; }
+  .redeem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .redeem-item { background: linear-gradient(145deg, #1c1730, #161226); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; text-align: center; transition: transform 0.2s; }
+  .redeem-item:hover { transform: translateY(-4px); border-color: var(--green); }
+  .redeem-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .redeem-item h3 { font-size: 0.9rem; margin-bottom: 6px; }
+  .redeem-price { display: inline-block; background: rgba(0,255,135,0.1); color: var(--green); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 15px; border: 1px solid rgba(0,255,135,0.3); }
+  .redeem-btn { width: 100%; background: linear-gradient(90deg, #00ff87, #60efff); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+  
+  .empty-state { text-align: center; color: var(--muted); padding: 40px; font-size: 0.85rem; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(10,8,16,0.9); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; width: 100%; max-width: 380px; max-height: 90vh; overflow-y: auto; }
+  .modal-box h2 { font-size: 0.95rem; margin-bottom: 16px; }
+  .field { margin-bottom: 12px; }
+  .field label { font-size: 0.75rem; color: var(--muted); display: block; margin-bottom: 5px; }
+  .field input { width: 100%; background: var(--bg2); border: 1px solid var(--card-border); color: var(--text); padding: 10px; border-radius: 8px; font-size: 0.85rem; }
+  .btn-primary { width: 100%; padding: 12px; background: linear-gradient(90deg, var(--magenta), var(--amber)); color: #14101f; border: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-top: 6px; }
+  .btn-secondary { width: 100%; padding: 10px; background: none; border: 1px solid var(--card-border); color: var(--muted); border-radius: 10px; font-size: 0.8rem; cursor: pointer; margin-top: 6px; }
+  .msg { font-size: 0.75rem; margin-top: 10px; text-align: center; }
+  .msg.error { color: #ff6b6b; }
+  .msg.success { color: #6cff9c; }
+  #playModal iframe { width: 100%; max-width: 900px; flex: 1; border: none; border-radius: 10px; background: #000; }
+  #playModal { flex-direction: column; }
+  .play-header { width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center; padding: 14px; }
+  .close-btn { background: var(--card); border: 1px solid var(--card-border); color: var(--text); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; }
+  footer { text-align: center; color: #4a4266; font-size: 0.7rem; padding: 25px; border-top: 1px solid var(--card-border); margin-top: 40px; }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo pixel"><div class="cart"></div>Pixel<span>Forge</span></div>
+  <div class="nav-right">
+    <div class="user-coins-badge" id="coinBadge">🪙 <span id="coinVal">0</span> Coins</div>
+    <button class="auth-btn pixel" id="authNavBtn" onclick="openAuthModal()">LOGIN</button>
+  </div>
 </nav>
 
 <section class="hero">
   <div class="eyebrow pixel">PRESS START</div>
-  <h1>Free browser games. <span class="hl">No installs.</span> No waiting.</h1>
-  <p class="sub">A growing shelf of instant-play games — new cartridges added regularly.</p>
+  <h1>Free browser games. <span class="hl">No installs.</span> Play & Earn.</h1>
+  <p class="sub">Instant-play browser games. Collect daily coins, refer friends, and unlock rewards.</p>
 </section>
 
-<div class="section-label pixel">// LIBRARY</div>
+<!-- FEATURES SECTION -->
+<div class="features-container">
+  <div class="feature-card amber-border">
+    <div class="feature-info"><h4 class="pixel">🎁 Daily Reward</h4><p>Login & claim 100 free coins!</p></div>
+    <button class="action-btn pixel" onclick="claimDailyReward()">CLAIM</button>
+  </div>
+  <div class="feature-card magenta-border">
+    <div class="feature-info"><h4 class="pixel">🚀 Refer & Earn</h4><p>Share with friends & get +500 coins!</p></div>
+    <button class="action-btn pixel" onclick="referAndEarn()">SHARE</button>
+  </div>
+</div>
+
+<div class="section-label pixel">// GAME LIBRARY</div>
 <div class="grid" id="gameGrid"></div>
 <div class="empty-state" id="emptyState" style="display:none;">No games uploaded yet — check back soon.</div>
 
-<div id="playModal">
+<!-- UNLOCKED REDEEM STORE -->
+<div class="redeem-section" id="store">
+  <div class="store-header">
+    <h2 class="pixel">🏆 Reward Store</h2>
+    <p>Use your hard-earned coins to claim real rewards. 10,000 Coins = ₹100.<br>
+    <span class="highlight-text">Your redeem codes will be sent directly to your registered email within 24 Hours!</span></p>
+  </div>
+  <div class="redeem-grid">
+    <div class="redeem-item">
+      <div class="redeem-icon">🎮</div>
+      <h3>₹100 Google Play Code</h3>
+      <div class="redeem-price">🪙 10,000 Coins</div>
+      <button class="redeem-btn pixel" onclick="requestRedeem('Google Play ₹100', 10000)">REDEEM</button>
+    </div>
+    <div class="redeem-item">
+      <div class="redeem-icon">🔥</div>
+      <h3>Free Fire 100 Diamonds</h3>
+      <div class="redeem-price">🪙 10,000 Coins</div>
+      <button class="redeem-btn pixel" onclick="requestRedeem('Free Fire 100 Diamonds', 10000)">REDEEM</button>
+    </div>
+    <div class="redeem-item">
+      <div class="redeem-icon">🛒</div>
+      <h3>₹200 Amazon Voucher</h3>
+      <div class="redeem-price">🪙 20,000 Coins</div>
+      <button class="redeem-btn pixel" onclick="requestRedeem('Amazon ₹200', 20000)">REDEEM</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="playModal">
   <div class="play-header">
-    <h3 id="playTitle"></h3>
-    <button class="close-btn" id="closePlayBtn">✕</button>
+    <h3 id="playTitle" style="font-size:0.85rem;"></h3>
+    <button class="close-btn" onclick="closePlayModal()">✕</button>
   </div>
   <iframe id="playFrame"></iframe>
 </div>
 
-<div id="adminModal">
-  <div class="admin-box" id="adminBoxContent">
-    <!-- filled by JS: login form or panel -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <h2 id="authTitle" class="pixel">User Login</h2>
+    <div class="field"><label>Email</label><input type="email" id="userEmail" placeholder="your@email.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="userPassword" placeholder="••••••••"></div>
+    <button class="btn-primary" onclick="handleUserAuth()">Continue</button>
+    <button class="btn-secondary" id="toggleAuthMode" onclick="toggleAuthMode()">New here? Create Account</button>
+    <button class="btn-secondary" onclick="closeAuthModal()">Cancel</button>
+    <div class="msg" id="authMsg"></div>
   </div>
+</div>
+
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-box" id="adminBoxContent"></div>
 </div>
 
 <footer>PixelForge — games run entirely in your browser.
@@ -326,7 +176,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-  // YOUR EXACT COPIED CONFIG (with the correct 'e')
   const firebaseConfig = {
     apiKey: "AIzaSyDXHnyAUPOYd45RCYjienLhbFviUCe5JS4",
     authDomain: "game-2e42e.firebaseapp.com",
@@ -340,240 +189,224 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
+  let currentUser = null;
+  let isRegistering = false;
 
-  // ---------- PUBLIC: LOAD GAMES ----------
-  const gameGrid = document.getElementById('gameGrid');
-  const emptyState = document.getElementById('emptyState');
-
-  function loadGames() {
-    db.collection('games').orderBy('createdAt', 'desc').get()
-      .then(snapshot => {
-        gameGrid.innerHTML = '';
-        if (snapshot.empty) {
-          emptyState.style.display = 'block';
-          return;
-        }
-        emptyState.style.display = 'none';
-        snapshot.forEach(doc => {
-          const g = doc.data();
-          const card = document.createElement('div');
-          card.className = 'game-card';
-          card.innerHTML = `
-            <div class="thumb">🕹️</div>
-            <div class="info">
-              <h3>${escapeHtml(g.name)}</h3>
-              <p>Play now</p>
-            </div>
-          `;
-          card.addEventListener('click', () => openGame(g.name, g.content));
-          gameGrid.appendChild(card);
-        });
-      })
-      .catch(err => {
-        console.error(err);
-        emptyState.textContent = 'Could not load games. Check your Firebase config.';
-        emptyState.style.display = 'block';
-      });
-  }
-
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  // ---------- PLAY MODAL ----------
-  const playModal = document.getElementById('playModal');
-  const playFrame = document.getElementById('playFrame');
-  const playTitle = document.getElementById('playTitle');
-
-  function openGame(name, content) {
-    playTitle.textContent = name;
-    if (content) {
-      playFrame.srcdoc = content;
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'EARN_COINS') {
+      const coinsEarned = parseInt(event.data.amount);
+      if (coinsEarned > 0) addCoinsFromGame(coinsEarned);
     }
-    playModal.classList.add('show');
-  }
-  document.getElementById('closePlayBtn').addEventListener('click', () => {
-    playModal.classList.remove('show');
-    playFrame.removeAttribute('srcdoc');
   });
 
-  // ---------- ADMIN MODAL ----------
+  function addCoinsFromGame(amount) {
+    if (!currentUser) { alert("You earned " + amount + " coins, but you are not logged in! Login to save them."); return; }
+    const userRef = db.collection('users').doc(currentUser.uid);
+    db.runTransaction(transaction => {
+      return transaction.get(userRef).then(doc => {
+        if (!doc.exists) throw "User not found";
+        const newCoins = (doc.data().coins || 0) + amount;
+        transaction.update(userRef, { coins: newCoins });
+        return newCoins;
+      });
+    }).then(newCoins => {
+      const badge = document.getElementById('coinBadge');
+      document.getElementById('coinVal').textContent = newCoins;
+      badge.classList.add('pop');
+      setTimeout(() => badge.classList.remove('pop'), 400);
+    }).catch(err => console.error(err));
+  }
+
+  auth.onAuthStateChanged(user => {
+    currentUser = user;
+    const authBtn = document.getElementById('authNavBtn');
+    if (user) { authBtn.textContent = 'LOGOUT'; fetchUserCoins(user.uid); } 
+    else { authBtn.textContent = 'LOGIN'; document.getElementById('coinVal').textContent = '0'; }
+  });
+
+  function openAuthModal() { if (currentUser) { auth.signOut(); return; } document.getElementById('authModal').classList.add('show'); }
+  function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); }
+  function toggleAuthMode() {
+    isRegistering = !isRegistering;
+    document.getElementById('authTitle').textContent = isRegistering ? 'Create Account' : 'User Login';
+    document.getElementById('toggleAuthMode').textContent = isRegistering ? 'Existing user? Login here' : 'New here? Create Account';
+  }
+
+  function handleUserAuth() {
+    const email = document.getElementById('userEmail').value.trim();
+    const pass = document.getElementById('userPassword').value;
+    const msg = document.getElementById('authMsg');
+    msg.textContent = 'Processing...'; msg.className = 'msg';
+    const promise = isRegistering ? auth.createUserWithEmailAndPassword(email, pass) : auth.signInWithEmailAndPassword(email, pass);
+    promise.then(cred => {
+      if (isRegistering) { db.collection('users').doc(cred.user.uid).set({ email: email, coins: 100, lastClaim: '' }); }
+      closeAuthModal();
+    }).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
+  }
+
+  function fetchUserCoins(uid) {
+    db.collection('users').doc(uid).get().then(doc => {
+      if (doc.exists) { document.getElementById('coinVal').textContent = doc.data().coins || 0; } 
+      else { db.collection('users').doc(uid).set({ coins: 100, lastClaim: '' }); document.getElementById('coinVal').textContent = '100'; }
+    });
+  }
+
+  function claimDailyReward() {
+    if (!currentUser) { alert("Please login first!"); openAuthModal(); return; }
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const today = new Date().toDateString();
+    db.runTransaction(transaction => {
+      return transaction.get(userRef).then(doc => {
+        if (!doc.exists) throw "User data not found!";
+        const data = doc.data();
+        if (data.lastClaim === today) throw "You already claimed your reward today!";
+        const newCoins = (data.coins || 0) + 100;
+        transaction.update(userRef, { coins: newCoins, lastClaim: today });
+        return newCoins;
+      });
+    }).then(newCoins => {
+      document.getElementById('coinVal').textContent = newCoins;
+      alert("🎉 Success! +100 Coins added to your cloud wallet!");
+    }).catch(err => { alert(typeof err === 'string' ? err : err.message); });
+  }
+
+  function referAndEarn() {
+    const refLink = window.location.href;
+    if (navigator.clipboard) { navigator.clipboard.writeText(refLink).then(() => alert("📋 Referral link copied! Share with friends to earn +500 coins.")); } 
+    else { prompt("Copy your referral link:", refLink); }
+  }
+
+  function requestRedeem(itemName, cost) {
+    if (!currentUser) { alert("Please login to redeem items."); openAuthModal(); return; }
+    if (confirm(`Do you want to redeem "${itemName}" for ${cost} Coins?`)) {
+      const userRef = db.collection('users').doc(currentUser.uid);
+      db.runTransaction(transaction => {
+        return transaction.get(userRef).then(doc => {
+          if (!doc.exists) throw "User data not found!";
+          const currentCoins = doc.data().coins || 0;
+          if (currentCoins < cost) throw `Not enough coins! You need ${cost - currentCoins} more coins.`;
+          const newCoins = currentCoins - cost;
+          transaction.update(userRef, { coins: newCoins });
+          const requestRef = db.collection('redeem_requests').doc();
+          transaction.set(requestRef, { uid: currentUser.uid, email: currentUser.email, item: itemName, cost: cost, status: "Pending", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+          return newCoins;
+        });
+      }).then(newCoins => {
+        document.getElementById('coinVal').textContent = newCoins;
+        alert(`✅ Success! Your request for "${itemName}" has been submitted. You will receive your redeem code on your registered email within 24 hours.`);
+      }).catch(err => { alert("❌ Error: " + (typeof err === 'string' ? err : err.message)); });
+    }
+  }
+
+  const gameGrid = document.getElementById('gameGrid');
+  const emptyState = document.getElementById('emptyState');
+  function loadGames() {
+    db.collection('games').orderBy('createdAt', 'desc').get().then(snapshot => {
+      gameGrid.innerHTML = '';
+      if (snapshot.empty) { emptyState.style.display = 'block'; return; }
+      emptyState.style.display = 'none';
+      snapshot.forEach(doc => {
+        const g = doc.data();
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `<div class="thumb">🕹️</div><div class="info"><h3>${escapeHtml(g.name)}</h3><p>Play & Earn</p></div>`;
+        card.addEventListener('click', () => openGame(g.name, g.content));
+        gameGrid.appendChild(card);
+      });
+    });
+  }
+  function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+  function openGame(name, content) { document.getElementById('playTitle').textContent = name; document.getElementById('playFrame').srcdoc = content; document.getElementById('playModal').classList.add('show'); }
+  function closePlayModal() { document.getElementById('playModal').classList.remove('show'); document.getElementById('playFrame').removeAttribute('srcdoc'); }
+
+  // --- ADMIN PANEL ---
   const adminModal = document.getElementById('adminModal');
   const adminBoxContent = document.getElementById('adminBoxContent');
-
-  // ---------- SECRET ADMIN ACCESS ----------
-  let secretTapCount = 0;
-  let secretTapTimer = null;
+  let secretTapCount = 0, secretTapTimer = null;
   document.getElementById('secretSpot').addEventListener('click', () => {
     secretTapCount++;
     if (secretTapTimer) clearTimeout(secretTapTimer);
     secretTapTimer = setTimeout(() => { secretTapCount = 0; }, 2000);
-    if (secretTapCount >= 3) {
-      secretTapCount = 0;
-      adminModal.classList.add('show');
-      renderAdminModal();
-    }
+    if (secretTapCount >= 3) { secretTapCount = 0; adminModal.classList.add('show'); renderAdminModal(); }
   });
-  adminModal.addEventListener('click', (e) => {
-    if (e.target === adminModal) adminModal.classList.remove('show');
-  });
+  adminModal.addEventListener('click', (e) => { if (e.target === adminModal) adminModal.classList.remove('show'); });
 
-  function renderAdminModal() {
-    const user = auth.currentUser;
-    if (user) {
-      renderUploadPanel();
-    } else {
-      renderLoginForm();
-    }
+  function renderAdminModal() { const user = auth.currentUser; if (user) renderAdminDashboard(); else renderAdminLogin(); }
+  function renderAdminLogin() { adminBoxContent.innerHTML = `<h2>Admin Login</h2><div class="field"><label>Email</label><input type="email" id="admEmail"></div><div class="field"><label>Password</label><input type="password" id="admPass"></div><button class="btn-primary" onclick="loginAdmin()">Log In</button><button class="btn-secondary" onclick="adminModal.classList.remove('show')">Cancel</button><div class="msg" id="admMsg"></div>`; }
+  function loginAdmin() {
+    auth.signInWithEmailAndPassword(document.getElementById('admEmail').value, document.getElementById('admPass').value)
+      .then(() => renderAdminDashboard()).catch(err => { document.getElementById('admMsg').textContent = err.message; document.getElementById('admMsg').className = 'msg error'; });
   }
-
-  function renderLoginForm() {
+  
+  function renderAdminDashboard() { 
     adminBoxContent.innerHTML = `
-      <h2>Admin Login</h2>
-      <div class="field">
-        <label>Email</label>
-        <input type="email" id="loginEmail">
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" id="loginPassword">
-      </div>
-      <button class="btn-primary" id="loginBtn">Log In</button>
-      <button class="btn-secondary" id="cancelAdminBtn">Cancel</button>
-      <div id="adminMsg"></div>
-    `;
-    document.getElementById('cancelAdminBtn').addEventListener('click', () => adminModal.classList.remove('show'));
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      const msg = document.getElementById('adminMsg');
-      msg.textContent = 'Logging in...';
-      msg.className = '';
-      
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => renderUploadPanel())
-        .catch(err => {
-          if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-             auth.createUserWithEmailAndPassword(email, password)
-               .then(() => renderUploadPanel())
-               .catch(createErr => {
-                  msg.textContent = createErr.message;
-                  msg.className = 'error';
-               });
-          } else {
-             msg.textContent = err.message;
-             msg.className = 'error';
-          }
-        });
-    });
+      <h2>Admin Dashboard</h2>
+      <button class="btn-primary" onclick="renderUploadSection()" style="margin-bottom:10px;">Upload Game</button>
+      <button class="btn-primary" onclick="renderUserSearchSection()" style="margin-bottom:10px; background:linear-gradient(90deg, #ffb703, #ff9f0a);">Search User Coins</button>
+      <button class="btn-primary" onclick="renderRedeemRequestsSection()" style="margin-bottom:10px; background:linear-gradient(90deg, #ff3d81, #ffb703);">View Redeem Requests</button>
+      <button class="btn-secondary" onclick="auth.signOut(); adminModal.classList.remove('show');">Log Out</button>
+      <button class="btn-secondary" onclick="adminModal.classList.remove('show')">Close</button>
+    `; 
   }
-
-  function renderUploadPanel() {
-    adminBoxContent.innerHTML = `
-      <div class="admin-panel-header">
-        <h2>Upload Game</h2>
-        <button class="logout" id="logoutBtn">Log out</button>
-      </div>
-      <div class="field">
-        <label>Game name</label>
-        <input type="text" id="gameName" placeholder="e.g. Merge2048">
-      </div>
-      <div class="field">
-        <label>Game file (single .html file)</label>
-        <input type="file" id="gameFile" accept=".html">
-      </div>
-      <button class="btn-primary" id="uploadBtn">Upload & Publish</button>
-      <div id="adminMsg"></div>
-      <ul class="uploaded-list" id="uploadedList"></ul>
-      <button class="btn-secondary" id="closeAdminBtn">Close</button>
-    `;
-    document.getElementById('closeAdminBtn').addEventListener('click', () => adminModal.classList.remove('show'));
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      auth.signOut().then(() => renderLoginForm());
-    });
-    document.getElementById('uploadBtn').addEventListener('click', uploadGame);
-    loadUploadedList();
-  }
-
+  
+  function renderUploadSection() { adminBoxContent.innerHTML = `<h2>Upload Game</h2><div class="field"><label>Game Name</label><input type="text" id="gameName"></div><div class="field"><label>HTML File</label><input type="file" id="gameFile" accept=".html"></div><button class="btn-primary" onclick="uploadGame()">Publish</button><button class="btn-secondary" onclick="renderAdminDashboard()">Back</button><div class="msg" id="admMsg"></div>`; }
   function uploadGame() {
-    const name = document.getElementById('gameName').value.trim();
-    const fileInput = document.getElementById('gameFile');
-    const file = fileInput.files[0];
-    const msg = document.getElementById('adminMsg');
-    const btn = document.getElementById('uploadBtn');
-
-    if (!name || !file) {
-      msg.textContent = 'Please enter a name and select a file.';
-      msg.className = 'error';
-      return;
-    }
-
-    btn.disabled = true;
-    msg.textContent = 'Saving directly to Database...';
-    msg.className = '';
-
+    const file = document.getElementById('gameFile').files[0];
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
-      const htmlContent = e.target.result;
-      
-      db.collection('games').add({
-        name: name,
-        content: htmlContent, 
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      .then(() => {
-        msg.textContent = 'Published! Now live for everyone.';
-        msg.className = 'success';
-        document.getElementById('gameName').value = '';
-        fileInput.value = '';
-        loadGames();
-        loadUploadedList();
-      })
-      .catch(err => {
-        console.error(err);
-        msg.textContent = 'Error: ' + err.message;
-        msg.className = 'error';
-      })
-      .finally(() => { btn.disabled = false; });
-    };
-    reader.onerror = function() {
-      msg.textContent = 'Error reading file.';
-      msg.className = 'error';
-      btn.disabled = false;
+      db.collection('games').add({ name: document.getElementById('gameName').value, content: e.target.result, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { loadGames(); renderAdminDashboard(); });
     };
     reader.readAsText(file);
   }
+  
+  function renderUserSearchSection() { adminBoxContent.innerHTML = `<h2>Search User</h2><div class="field"><label>Email</label><input type="text" id="searchEmail"></div><button class="btn-primary" onclick="searchUser()">Search</button><div id="searchResult" style="margin-top:12px; font-size:0.75rem;"></div><button class="btn-secondary" onclick="renderAdminDashboard()" style="margin-top:12px;">Back</button>`; }
+  function searchUser() {
+    db.collection('users').where('email', '==', document.getElementById('searchEmail').value.trim().toLowerCase()).get().then(snapshot => {
+      const res = document.getElementById('searchResult');
+      if (snapshot.empty) { res.textContent = 'Not found'; return; }
+      snapshot.forEach(doc => { res.innerHTML = `<div style="background:var(--bg2); padding:10px; border-radius:8px;"><b>${doc.data().email}</b><br>Coins: <span style="color:var(--amber);">${doc.data().coins}</span></div>`; });
+    });
+  }
 
-  function loadUploadedList() {
-    const list = document.getElementById('uploadedList');
-    if (!list) return;
-    db.collection('games').orderBy('createdAt', 'desc').get()
-      .then(snapshot => {
-        list.innerHTML = '';
-        snapshot.forEach(doc => {
-          const g = doc.data();
-          const li = document.createElement('li');
-          li.innerHTML = `<span>${escapeHtml(g.name)}</span>`;
-          const delBtn = document.createElement('button');
-          delBtn.textContent = '✕';
-          delBtn.onclick = () => {
-            if (confirm(`Delete "${g.name}"?`)) {
-              db.collection('games').doc(doc.id).delete().then(() => {
-                loadGames();
-                loadUploadedList();
-              });
-            }
-          };
-          li.appendChild(delBtn);
-          list.appendChild(li);
-        });
+  function renderRedeemRequestsSection() {
+    adminBoxContent.innerHTML = `
+      <h2>Redeem Requests</h2>
+      <div id="requestsList" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px; font-size:0.75rem;">Loading...</div>
+      <button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>
+    `;
+    loadRedeemRequests();
+  }
+
+  function loadRedeemRequests() {
+    db.collection('redeem_requests').orderBy('timestamp', 'desc').get().then(snapshot => {
+      const list = document.getElementById('requestsList');
+      if (snapshot.empty) { list.innerHTML = '<p style="color:var(--muted);">No pending requests.</p>'; return; }
+      list.innerHTML = '';
+      snapshot.forEach(doc => {
+        const req = doc.data();
+        const div = document.createElement('div');
+        div.style.cssText = "background:var(--bg2); padding:10px; border-radius:8px; margin-bottom:8px;";
+        div.innerHTML = `
+          <b>Email:</b> ${req.email}<br>
+          <b>Item:</b> ${req.item}<br>
+          <b>Status:</b> <span style="color:${req.status === 'Pending' ? '#ffb703' : '#00ff87'}">${req.status}</span><br>
+          ${req.status === 'Pending' ? `<button onclick="markRequestDone('${doc.id}')" style="margin-top:6px; background:var(--card-border); color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Mark Completed</button>` : ''}
+        `;
+        list.appendChild(div);
       });
+    });
+  }
+
+  function markRequestDone(id) {
+    if (confirm('Did you send the reward? Mark as completed?')) {
+      db.collection('redeem_requests').doc(id).update({ status: 'Completed' })
+        .then(() => loadRedeemRequests())
+        .catch(err => alert("Error: " + err.message));
+    }
   }
 
   loadGames();
 </script>
-
 </body>
 </html>
