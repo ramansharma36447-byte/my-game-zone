@@ -320,13 +320,13 @@
   <span id="secretSpot" style="display:inline-block; width:44px; height:44px; vertical-align:middle;"></span>
 </footer>
 
-<!-- Firebase SDK (Sirf Auth aur Firestore) -->
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-  // EXACT CONFIG FROM YOUR SCREENSHOT
+  // 100% CORRECT FIREBASE CONFIG
   const firebaseConfig = {
     apiKey: "AIzaSyDXHnyAUPOYd45RCYjienLhbFviUCE5JS4",
     authDomain: "game-2e42e.firebaseapp.com",
@@ -514,7 +514,6 @@
     msg.textContent = 'Saving directly to Database...';
     msg.className = '';
 
-    // 🔥 SMART HACK: Storage bypass! Database me sidha HTML save karo
     const reader = new FileReader();
     reader.onload = function(e) {
       const htmlContent = e.target.result;
@@ -573,7 +572,6 @@
       });
   }
 
-  // Init
   loadGames();
 </script>
 
