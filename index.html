@@ -307,7 +307,7 @@
     <h3 id="playTitle"></h3>
     <button class="close-btn" id="closePlayBtn">✕</button>
   </div>
-  <iframe id="playFrame" src=""></iframe>
+  <iframe id="playFrame"></iframe>
 </div>
 
 <div id="adminModal">
@@ -324,10 +324,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<!-- Firebase Storage HATA DIYA GAYA HAI! Uski zaroorat hi nahi! -->
 
 <script>
-  // NEW FIREBASE CONFIG INCLUDED HERE
   const firebaseConfig = {
     apiKey: "AIzaSyDXHnyAUPOYd45RCYjienLhbFviUCE5JS4",
     authDomain: "game-2e42e.firebaseapp.com",
@@ -340,7 +339,6 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
-  const storage = firebase.storage();
 
   // ---------- PUBLIC: LOAD GAMES ----------
   const gameGrid = document.getElementById('gameGrid');
@@ -366,7 +364,7 @@
               <p>Play now</p>
             </div>
           `;
-          card.addEventListener('click', () => openGame(g.name, g.fileUrl));
+          card.addEventListener('click', () => openGame(g.name, g.content));
           gameGrid.appendChild(card);
         });
       })
@@ -388,21 +386,23 @@
   const playFrame = document.getElementById('playFrame');
   const playTitle = document.getElementById('playTitle');
 
-  function openGame(name, url) {
+  function openGame(name, content) {
     playTitle.textContent = name;
-    playFrame.src = url;
+    if (content) {
+      playFrame.srcdoc = content;
+    }
     playModal.classList.add('show');
   }
   document.getElementById('closePlayBtn').addEventListener('click', () => {
     playModal.classList.remove('show');
-    playFrame.src = '';
+    playFrame.removeAttribute('srcdoc');
   });
 
   // ---------- ADMIN MODAL ----------
   const adminModal = document.getElementById('adminModal');
   const adminBoxContent = document.getElementById('adminBoxContent');
 
-  // ---------- SECRET ADMIN ACCESS: tap the invisible spot in footer 3 times within 2 seconds ----------
+  // ---------- SECRET ADMIN ACCESS ----------
   let secretTapCount = 0;
   let secretTapTimer = null;
   document.getElementById('secretSpot').addEventListener('click', () => {
@@ -510,18 +510,18 @@
     }
 
     btn.disabled = true;
-    msg.textContent = 'Uploading...';
+    msg.textContent = 'Saving directly to Database...';
     msg.className = '';
 
-    const storageRef = storage.ref(`games/${Date.now()}_${file.name}`);
-    storageRef.put(file)
-      .then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => {
-        return db.collection('games').add({
-          name: name,
-          fileUrl: url,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+    // 🔥 SMART HACK: Storage bypass! Database me sidha HTML save karo
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const htmlContent = e.target.result;
+      
+      db.collection('games').add({
+        name: name,
+        content: htmlContent, 
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
       .then(() => {
         msg.textContent = 'Published! Now live for everyone.';
@@ -537,6 +537,13 @@
         msg.className = 'error';
       })
       .finally(() => { btn.disabled = false; });
+    };
+    reader.onerror = function() {
+      msg.textContent = 'Error reading file.';
+      msg.className = 'error';
+      btn.disabled = false;
+    };
+    reader.readAsText(file);
   }
 
   function loadUploadedList() {
