@@ -42,7 +42,7 @@
   .grid { max-width: 1100px; margin: 0 auto 40px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
   .game-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
   .game-card:hover { transform: translateY(-3px); border-color: var(--amber); }
-  .game-card .thumb { width: 100%; aspect-ratio: 4/3; background: linear-gradient(135deg, #2a2350, #1c1730); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+  .game-card .thumb { width: 100%; aspect-ratio: 4/3; background: linear-gradient(135deg, #2a2350, #1c1730); display: flex; align-items: center; justify-content: center; font-size: 2rem; background-size: cover; background-position: center; } /* UPDATED FOR IMAGE */
   .game-card .info { padding: 10px 12px; }
   .game-card h3 { font-size: 0.8rem; margin-bottom: 2px; }
   .game-card p { font-size: 0.65rem; color: var(--muted); }
@@ -298,6 +298,7 @@
     }
   }
 
+  // --- UPDATED: LOAD GAMES WITH THUMBNAIL ---
   const gameGrid = document.getElementById('gameGrid');
   const emptyState = document.getElementById('emptyState');
   function loadGames() {
@@ -309,7 +310,16 @@
         const g = doc.data();
         const card = document.createElement('div');
         card.className = 'game-card';
-        card.innerHTML = `<div class="thumb">🕹️</div><div class="info"><h3>${escapeHtml(g.name)}</h3><p>Play & Earn</p></div>`;
+        
+        // Check if there is an image, else use default icon
+        let thumbContent = '';
+        if (g.image) {
+          thumbContent = `<div class="thumb" style="background-image: url('${g.image}');"></div>`;
+        } else {
+          thumbContent = `<div class="thumb">🕹️</div>`;
+        }
+
+        card.innerHTML = `${thumbContent}<div class="info"><h3>${escapeHtml(g.name)}</h3><p>Play & Earn</p></div>`;
         card.addEventListener('click', () => openGame(g.name, g.content));
         gameGrid.appendChild(card);
       });
@@ -317,7 +327,6 @@
   }
   function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
   
-  // --- UPDATED: Require Login to Play Game ---
   function openGame(name, content) { 
     if (!currentUser) {
       alert("You must be logged in to play games and earn coins!");
@@ -331,7 +340,7 @@
   
   function closePlayModal() { document.getElementById('playModal').classList.remove('show'); document.getElementById('playFrame').removeAttribute('srcdoc'); }
 
-  // --- ADMIN PANEL ---
+  // --- ADMIN PANEL (UPDATED FOR IMAGE UPLOAD) ---
   const adminModal = document.getElementById('adminModal');
   const adminBoxContent = document.getElementById('adminBoxContent');
   let secretTapCount = 0, secretTapTimer = null;
@@ -361,15 +370,54 @@
     `; 
   }
   
-  function renderUploadSection() { adminBoxContent.innerHTML = `<h2>Upload Game</h2><div class="field"><label>Game Name</label><input type="text" id="gameName"></div><div class="field"><label>HTML File</label><input type="file" id="gameFile" accept=".html"></div><button class="btn-primary" onclick="uploadGame()">Publish</button><button class="btn-secondary" onclick="renderAdminDashboard()">Back</button><div class="msg" id="admMsg"></div>`; }
+  function renderUploadSection() { 
+    adminBoxContent.innerHTML = `
+      <h2>Upload Game</h2>
+      <div class="field"><label>Game Name</label><input type="text" id="gameName"></div>
+      <div class="field"><label>Game Photo (Thumbnail - .jpg, .png)</label><input type="file" id="gameImage" accept="image/*"></div>
+      <div class="field"><label>HTML File (.html)</label><input type="file" id="gameFile" accept=".html"></div>
+      <button class="btn-primary" onclick="uploadGame()">Publish</button>
+      <button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>
+      <div class="msg" id="admMsg"></div>
+    `; 
+  }
+  
   function uploadGame() {
     const file = document.getElementById('gameFile').files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      db.collection('games').add({ name: document.getElementById('gameName').value, content: e.target.result, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { loadGames(); renderAdminDashboard(); });
+    const imageFile = document.getElementById('gameImage').files[0];
+    const gameName = document.getElementById('gameName').value;
+    const msg = document.getElementById('admMsg');
+    
+    if (!file || !gameName) { msg.textContent = "Name and HTML file are required."; msg.className = 'msg error'; return; }
+    
+    msg.textContent = 'Uploading...';
+    
+    // Function to handle the actual database save
+    const saveToDB = (htmlContent, imageBase64) => {
+      db.collection('games').add({ 
+        name: gameName, 
+        content: htmlContent, 
+        image: imageBase64, // will be null if no image selected
+        createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+      }).then(() => { 
+        loadGames(); 
+        renderAdminDashboard(); 
+      }).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
     };
-    reader.readAsText(file);
+
+    const htmlReader = new FileReader();
+    htmlReader.onload = function(eHtml) {
+      if (imageFile) {
+        const imgReader = new FileReader();
+        imgReader.onload = function(eImg) {
+          saveToDB(eHtml.target.result, eImg.target.result);
+        };
+        imgReader.readAsDataURL(imageFile); // Read image as Base64 string
+      } else {
+        saveToDB(eHtml.target.result, null);
+      }
+    };
+    htmlReader.readAsText(file);
   }
   
   function renderUserSearchSection() { adminBoxContent.innerHTML = `<h2>Search User</h2><div class="field"><label>Email</label><input type="text" id="searchEmail"></div><button class="btn-primary" onclick="searchUser()">Search</button><div id="searchResult" style="margin-top:12px; font-size:0.75rem;"></div><button class="btn-secondary" onclick="renderAdminDashboard()" style="margin-top:12px;">Back</button>`; }
