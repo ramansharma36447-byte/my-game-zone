@@ -252,7 +252,7 @@
   }
 
   function claimDailyReward() {
-    if (!currentUser) { alert("Please login first!"); openAuthModal(); return; }
+    if (!currentUser) { alert("You must be logged in to claim daily rewards!"); openAuthModal(); return; }
     const userRef = db.collection('users').doc(currentUser.uid);
     const today = new Date().toDateString();
     db.runTransaction(transaction => {
@@ -316,7 +316,19 @@
     });
   }
   function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
-  function openGame(name, content) { document.getElementById('playTitle').textContent = name; document.getElementById('playFrame').srcdoc = content; document.getElementById('playModal').classList.add('show'); }
+  
+  // --- UPDATED: Require Login to Play Game ---
+  function openGame(name, content) { 
+    if (!currentUser) {
+      alert("You must be logged in to play games and earn coins!");
+      openAuthModal();
+      return;
+    }
+    document.getElementById('playTitle').textContent = name; 
+    document.getElementById('playFrame').srcdoc = content; 
+    document.getElementById('playModal').classList.add('show'); 
+  }
+  
   function closePlayModal() { document.getElementById('playModal').classList.remove('show'); document.getElementById('playFrame').removeAttribute('srcdoc'); }
 
   // --- ADMIN PANEL ---
