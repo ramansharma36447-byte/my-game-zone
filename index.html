@@ -74,6 +74,7 @@
     border-radius: 2px;
   }
   .logo span { color: var(--amber); }
+  .nav-right { display: flex; gap: 8px; align-items: center; }
 
   .auth-btn {
     background: var(--card);
@@ -253,44 +254,45 @@
   .bottom-nav button .icon { font-size: 1.1rem; }
   .bottom-nav button.active { color: var(--amber); }
 
-  /* ===== CUSTOM "ADD TO HOME SCREEN" BANNER ===== */
-  .install-banner {
-    position: fixed;
-    left: 12px; right: 12px; bottom: 78px; /* sits just above bottom nav */
-    background: linear-gradient(145deg, #211b38, #2a2350);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 14px;
+  /* ===== LOADING OVERLAY (shown during Google redirect sign-in) ===== */
+  .loading-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
     display: none;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    z-index: 80;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    justify-content: center;
+    gap: 14px;
+    z-index: 300;
   }
-  .install-banner.show { display: flex; flex-wrap: wrap; }
-  .install-banner-icon { width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; }
-  .install-banner-text { flex: 1; min-width: 140px; }
-  .install-banner-text h4 { font-size: 0.8rem; color: var(--text); margin-bottom: 2px; }
-  .install-banner-text p { font-size: 0.65rem; color: var(--muted); line-height: 1.3; }
-  .install-banner-actions { display: flex; gap: 8px; width: 100%; margin-top: 4px; }
-  .install-later-btn, .install-add-btn {
-    flex: 1;
-    padding: 9px;
-    border-radius: 8px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
+  .loading-overlay.show { display: flex; }
+  .loading-overlay p { font-size: 0.8rem; color: var(--muted); }
+  .spinner {
+    width: 38px; height: 38px;
+    border: 3px solid var(--card-border);
+    border-top-color: var(--amber);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
   }
-  .install-later-btn { background: none; border: 1px solid var(--card-border); color: var(--muted); }
-  .install-add-btn { background: linear-gradient(90deg, var(--amber), var(--magenta)); color: #14101f; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
+<!-- Loading overlay: shown while Google redirect login is being processed, so the
+     screen doesn't look stuck/frozen on slow networks. -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>Signing you in…</p>
+</div>
+
+
 <nav>
   <div class="logo pixel"><div class="cart"></div>Pixel<span>Forge</span></div>
-  <button class="auth-btn pixel" id="authNavBtn" onclick="openAuthModal()">LOGIN</button>
+  <div class="nav-right">
+    <button class="auth-btn pixel" id="installNavBtn" onclick="triggerInstallPrompt()" style="display:none;">Install</button>
+    <button class="auth-btn pixel" id="authNavBtn" onclick="openAuthModal()">LOGIN</button>
+  </div>
 </nav>
 
 <section class="hero">
@@ -309,7 +311,7 @@
     <button class="close-btn" onclick="closePlayModal()">✕</button>
   </div>
   <!-- sandbox: uploaded game HTML cannot read parent page/cookies/storage -->
-  <iframe id="playFrame" sandbox="allow-scripts"></iframe>
+  <iframe id="playFrame" sandbox="allow-scripts allow-same-origin"></iframe>
 </div>
 
 <!-- AUTH MODAL -->
@@ -334,19 +336,6 @@
   <div class="modal-box" id="adminBoxContent"></div>
 </div>
 
-<!-- CUSTOM "ADD TO HOME SCREEN" BANNER (shown after login, replaces Chrome's default popup) -->
-<div class="install-banner" id="installBanner">
-  <img src="data:image/png;base64,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" alt="PixelForge" class="install-banner-icon">
-  <div class="install-banner-text">
-    <h4>Install PixelForge</h4>
-    <p>Add to your Home Screen for a full-screen, app-like experience.</p>
-  </div>
-  <div class="install-banner-actions">
-    <button class="install-later-btn" onclick="dismissInstallBanner()">Later</button>
-    <button class="install-add-btn" onclick="triggerInstallPrompt()">Add to Home Screen</button>
-  </div>
-</div>
-
 <footer>PixelForge — games run entirely in your browser.
   <span id="secretSpot" style="display:inline-block; width:40px; height:40px; vertical-align:middle;"></span>
 </footer>
@@ -368,6 +357,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- JSZip: lets the admin upload a .zip game (HTML+CSS+JS+images bundled together) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <script>
   const firebaseConfig = {
@@ -411,14 +402,23 @@
   // FIX: mobile browsers (Chrome mobile especially) often block/break signInWithPopup
   // (third-party cookie partitioning, popup blockers). signInWithRedirect + getRedirectResult
   // works reliably on mobile because it does a full-page navigation instead of a popup.
+  // Show a spinner immediately if we're returning from a Google redirect sign-in,
+  // so the screen doesn't look frozen while Firebase processes the result (especially on slow networks).
+  if (sessionStorage.getItem('googleRedirectPending') === '1') {
+    document.getElementById('loadingOverlay').classList.add('show');
+  }
+
   auth.getRedirectResult().then(result => {
     if (result && result.user) {
       return ensureUserDoc(result.user).then(() => {
         closeAuthModal();
-        setTimeout(maybeShowInstallBanner, 600);
       });
     }
-  }).catch(err => { if (err && err.message) alert(err.message); });
+  }).catch(err => { if (err && err.message) alert(err.message); })
+    .finally(() => {
+      sessionStorage.removeItem('googleRedirectPending');
+      document.getElementById('loadingOverlay').classList.remove('show');
+    });
 
   function openAuthModal() { if (currentUser) { auth.signOut(); return; } document.getElementById('authModal').classList.add('show'); }
   function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); }
@@ -431,6 +431,7 @@
 
   function loginWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
+    sessionStorage.setItem('googleRedirectPending', '1');
     auth.signInWithRedirect(provider); // page reloads; result handled by getRedirectResult above
   }
 
@@ -443,7 +444,6 @@
     const promise = isRegistering ? auth.createUserWithEmailAndPassword(email, pass) : auth.signInWithEmailAndPassword(email, pass);
     promise.then(cred => ensureUserDoc(cred.user)).then(() => {
       closeAuthModal();
-      setTimeout(maybeShowInstallBanner, 600);
     }).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
   }
 
@@ -458,7 +458,7 @@
         const g = doc.data();
         const card = document.createElement('div');
         card.className = 'game-card';
-        let thumbContent = g.image ? `<div class="thumb" style="background-image: url('${escapeHtml(g.image)}');"></div>` : `<div class="thumb">🕹️</div>`;
+        let thumbContent = g.image ? `<div class="thumb" style="background-image: url('${g.image}');"></div>` : `<div class="thumb">🕹️</div>`;
         card.innerHTML = `${thumbContent}<div class="info"><h3>${escapeHtml(g.name)}</h3><p>Play Now</p></div>`;
         card.addEventListener('click', () => openGame(g.name, g.content));
         gameGrid.appendChild(card);
@@ -535,11 +535,109 @@
       <h2>Upload Game</h2>
       <div class="field"><label>Game Name</label><input type="text" id="gameName"></div>
       <div class="field"><label>Game Photo (Thumbnail)</label><input type="file" id="gameImage" accept="image/*"></div>
-      <div class="field"><label>HTML File (.html)</label><input type="file" id="gameFile" accept=".html"></div>
+      <div class="field"><label>Game File (.html or .zip)</label><input type="file" id="gameFile" accept=".html,.zip"></div>
+      <p style="font-size:0.65rem; color:var(--muted); margin-bottom:8px;">ZIP mein ek index.html hona chahiye jismein CSS/JS/images relative paths (jaise src="game.js") se link ho. Total size ~900KB se kam rakho.</p>
       <button class="btn-primary" onclick="uploadGame()">Publish</button>
       <button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>
       <div class="msg" id="admMsg"></div>
     `;
+  }
+
+  // Resolves a relative path like "img/x.png" against the folder of the current file inside the zip.
+  function resolveZipPath(baseDir, relPath) {
+    if (/^([a-z]+:)?\/\//i.test(relPath) || relPath.startsWith('data:')) return null; // external/absolute — leave alone
+    const combined = (baseDir + relPath).replace(/^\.\//, '');
+    const parts = combined.split('/');
+    const stack = [];
+    for (const p of parts) {
+      if (p === '..') stack.pop();
+      else if (p !== '.' && p !== '') stack.push(p);
+    }
+    return stack.join('/');
+  }
+
+  function guessMime(path) {
+    const ext = path.split('.').pop().toLowerCase();
+    const map = {
+      png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', svg: 'image/svg+xml', webp: 'image/webp',
+      mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg', mp4: 'video/mp4',
+      json: 'application/json', css: 'text/css', js: 'application/javascript', woff: 'font/woff', woff2: 'font/woff2'
+    };
+    return map[ext] || 'application/octet-stream';
+  }
+
+  // Turns a multi-file ZIP game into one self-contained HTML string (images/audio/css/js inlined),
+  // so it can still be played the same way as before — inside an iframe's srcdoc.
+  async function zipToSelfContainedHtml(zipFile) {
+    const zip = await JSZip.loadAsync(zipFile);
+    let htmlPath = null;
+    zip.forEach((relPath, entry) => {
+      if (!entry.dir && relPath.toLowerCase().endsWith('.html')) {
+        if (!htmlPath || relPath.toLowerCase() === 'index.html' || relPath.toLowerCase().endsWith('/index.html')) htmlPath = relPath;
+      }
+    });
+    if (!htmlPath) throw new Error('ZIP mein koi .html file nahi mili — ek index.html zaroor honi chahiye.');
+
+    const baseDir = htmlPath.includes('/') ? htmlPath.substring(0, htmlPath.lastIndexOf('/') + 1) : '';
+    let htmlText = await zip.file(htmlPath).async('string');
+
+    async function fileToDataUri(path) {
+      const f = zip.file(path);
+      if (!f) return null;
+      const base64 = await f.async('base64');
+      return `data:${guessMime(path)};base64,${base64}`;
+    }
+
+    async function inlineCssUrls(cssText, cssDir) {
+      const urlRegex = /url\(\s*['"]?([^'")]+)['"]?\s*\)/g;
+      const matches = [...cssText.matchAll(urlRegex)];
+      for (const m of matches) {
+        const resolved = resolveZipPath(cssDir, m[1]);
+        if (resolved) {
+          const uri = await fileToDataUri(resolved);
+          if (uri) cssText = cssText.split(m[0]).join(`url("${uri}")`);
+        }
+      }
+      return cssText;
+    }
+
+    const doc = new DOMParser().parseFromString(htmlText, 'text/html');
+
+    for (const el of doc.querySelectorAll('img[src], audio[src], video[src], source[src]')) {
+      const resolved = resolveZipPath(baseDir, el.getAttribute('src'));
+      if (resolved) { const uri = await fileToDataUri(resolved); if (uri) el.setAttribute('src', uri); }
+    }
+
+    for (const link of Array.from(doc.querySelectorAll('link[rel="stylesheet"][href]'))) {
+      const resolved = resolveZipPath(baseDir, link.getAttribute('href'));
+      const cssFile = resolved ? zip.file(resolved) : null;
+      if (cssFile) {
+        let cssText = await cssFile.async('string');
+        const cssDir = resolved.includes('/') ? resolved.substring(0, resolved.lastIndexOf('/') + 1) : '';
+        cssText = await inlineCssUrls(cssText, cssDir);
+        const styleTag = doc.createElement('style');
+        styleTag.textContent = cssText;
+        link.replaceWith(styleTag);
+      }
+    }
+
+    for (const script of Array.from(doc.querySelectorAll('script[src]'))) {
+      const resolved = resolveZipPath(baseDir, script.getAttribute('src'));
+      const jsFile = resolved ? zip.file(resolved) : null;
+      if (jsFile) {
+        let jsText = await jsFile.async('string');
+        jsText = jsText.replace(/<\/script>/gi, '<\\/script>'); // avoid breaking out of the inline script tag
+        const inlineScript = doc.createElement('script');
+        inlineScript.textContent = jsText;
+        script.replaceWith(inlineScript);
+      }
+    }
+
+    for (const styleEl of doc.querySelectorAll('style')) {
+      styleEl.textContent = await inlineCssUrls(styleEl.textContent, baseDir);
+    }
+
+    return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
   }
 
   function uploadGame() {
@@ -547,23 +645,36 @@
     const imageFile = document.getElementById('gameImage').files[0];
     const gameName = document.getElementById('gameName').value;
     const msg = document.getElementById('admMsg');
-    if (!file || !gameName) { msg.textContent = "Name and HTML file required."; msg.className = 'msg error'; return; }
+    if (!file || !gameName) { msg.textContent = "Name and game file required."; msg.className = 'msg error'; return; }
 
     msg.textContent = 'Uploading...';
     const saveToDB = (htmlContent, imageBase64) => {
+      const approxSizeKB = Math.round(new Blob([htmlContent]).size / 1024);
+      if (approxSizeKB > 900) {
+        msg.textContent = `Game too big (${approxSizeKB}KB) — Firestore limit ~1MB. Use smaller images/audio.`;
+        msg.className = 'msg error';
+        return;
+      }
       db.collection('games').add({ name: gameName, content: htmlContent, image: imageBase64, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
       .then(() => { loadGames(); renderAdminDashboard(); }).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
     };
 
-    const htmlReader = new FileReader();
-    htmlReader.onload = function(eHtml) {
+    const finishWithHtml = (htmlContent) => {
       if (imageFile) {
         const imgReader = new FileReader();
-        imgReader.onload = function(eImg) { saveToDB(eHtml.target.result, eImg.target.result); };
+        imgReader.onload = (eImg) => saveToDB(htmlContent, eImg.target.result);
         imgReader.readAsDataURL(imageFile);
-      } else { saveToDB(eHtml.target.result, null); }
+      } else { saveToDB(htmlContent, null); }
     };
-    htmlReader.readAsText(file);
+
+    const lowerName = file.name.toLowerCase();
+    if (lowerName.endsWith('.zip')) {
+      zipToSelfContainedHtml(file).then(finishWithHtml).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
+    } else {
+      const htmlReader = new FileReader();
+      htmlReader.onload = (eHtml) => finishWithHtml(eHtml.target.result);
+      htmlReader.readAsText(file);
+    }
   }
 
   function renderManageGamesSection() {
@@ -629,36 +740,28 @@
   }
 
   let deferredInstallPrompt = null;
-  let installBannerShownThisSession = false;
-
-  // Chrome fires this automatically when install criteria are met. We capture it and
-  // stop Chrome's own mini-banner so we can show our own styled one instead, only after login.
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredInstallPrompt = e;
-  });
 
   function isAlreadyInstalled() {
     return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   }
 
-  function maybeShowInstallBanner() {
-    if (isAlreadyInstalled()) return; // already added to home screen, don't nag
-    if (installBannerShownThisSession) return;
-    if (!deferredInstallPrompt) return; // browser hasn't offered install yet (or unsupported, e.g. iOS Safari)
-    installBannerShownThisSession = true;
-    document.getElementById('installBanner').classList.add('show');
-  }
-
-  function dismissInstallBanner() {
-    document.getElementById('installBanner').classList.remove('show');
-  }
+  // Chrome fires this when the site is installable. We capture it and show our own
+  // small "Install" button next to LOGIN instead of Chrome's own banner.
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    if (!isAlreadyInstalled()) {
+      document.getElementById('installNavBtn').style.display = 'inline-block';
+    }
+  });
 
   function triggerInstallPrompt() {
-    dismissInstallBanner();
     if (!deferredInstallPrompt) return;
     deferredInstallPrompt.prompt();
-    deferredInstallPrompt.userChoice.finally(() => { deferredInstallPrompt = null; });
+    deferredInstallPrompt.userChoice.finally(() => {
+      deferredInstallPrompt = null;
+      document.getElementById('installNavBtn').style.display = 'none';
+    });
   }
 </script>
 </body>
