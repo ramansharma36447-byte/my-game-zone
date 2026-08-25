@@ -637,6 +637,31 @@
       styleEl.textContent = await inlineCssUrls(styleEl.textContent, baseDir);
     }
 
+    // FIX: some games load assets (sounds/images) from inside JavaScript code —
+    // e.g. fetch('jump.mp3') or new Audio('jump.mp3') — instead of an HTML tag.
+    // Those relative paths can't resolve inside a srcdoc iframe (no real base URL),
+    // so we scan every non-HTML file in the ZIP and, if its filename appears as a
+    // quoted string literal inside any <script> block, swap it for an embedded data URI.
+    const assetPaths = [];
+    zip.forEach((relPath, entry) => {
+      if (!entry.dir && relPath !== htmlPath && !relPath.toLowerCase().endsWith('.js') && !relPath.toLowerCase().endsWith('.css')) {
+        assetPaths.push(relPath);
+      }
+    });
+    for (const assetPath of assetPaths) {
+      const relKey = assetPath.startsWith(baseDir) ? assetPath.slice(baseDir.length) : assetPath;
+      const uri = await fileToDataUri(assetPath);
+      if (!uri) continue;
+      for (const scriptEl of doc.querySelectorAll('script:not([src])')) {
+        if (scriptEl.textContent.includes(`'${relKey}'`)) {
+          scriptEl.textContent = scriptEl.textContent.split(`'${relKey}'`).join(`'${uri}'`);
+        }
+        if (scriptEl.textContent.includes(`"${relKey}"`)) {
+          scriptEl.textContent = scriptEl.textContent.split(`"${relKey}"`).join(`"${uri}"`);
+        }
+      }
+    }
+
     return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
   }
 
