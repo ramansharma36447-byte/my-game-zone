@@ -279,26 +279,17 @@
 </head>
 <body>
 
-<!-- Loading overlay: shown while Google redirect login is being processed, so the
-     screen doesn't look stuck/frozen on slow networks. -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-  <p>Signing you in…</p>
-</div>
-
-
 <nav>
   <div class="logo pixel"><div class="cart"></div>Pixel<span>Forge</span></div>
   <div class="nav-right">
     <button class="auth-btn pixel" id="installNavBtn" onclick="triggerInstallPrompt()" style="display:none;">Install</button>
-    <button class="auth-btn pixel" id="authNavBtn" onclick="openAuthModal()">LOGIN</button>
   </div>
 </nav>
 
 <section class="hero">
   <div class="eyebrow pixel">PRESS START</div>
   <h1>Free browser games. <span class="hl">No installs.</span></h1>
-  <p class="sub">Instant-play browser games. Login and start playing.</p>
+  <p class="sub">Instant-play browser games. Just tap and play.</p>
 </section>
 
 <div class="section-label pixel" id="gameGridContainer">// GAME LIBRARY</div>
@@ -312,24 +303,6 @@
   </div>
   <!-- sandbox: uploaded game HTML cannot read parent page/cookies/storage -->
   <iframe id="playFrame" sandbox="allow-scripts allow-same-origin"></iframe>
-</div>
-
-<!-- AUTH MODAL -->
-<div class="modal-overlay" id="authModal">
-  <div class="modal-box">
-    <h2 id="authTitle" class="pixel">Login / Register</h2>
-    <button class="btn-google" onclick="loginWithGoogle()">
-      <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.19-1.84H9v3.49h4.84c-.21 1.13-.86 2.08-1.82 2.72v2.26h2.94c1.72-1.58 2.72-3.9 2.72-6.63z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.94-2.26c-.81.54-1.84.86-3.02.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33C2.45 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.75c-.19-.54-.3-1.12-.3-1.75s.11-1.21.3-1.75V4.92H.96C.35 6.13 0 7.5 0 9s.35 2.87.96 4.08l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.45 2.02.96 4.92l3.01 2.33c.71-2.13 2.69-3.67 5.03-3.67z"/></svg>
-      Continue with Google
-    </button>
-    <div class="divider">OR EMAIL</div>
-    <div class="field"><label>Email</label><input type="email" id="userEmail" placeholder="your@email.com"></div>
-    <div class="field"><label>Password</label><input type="password" id="userPassword" placeholder="••••••••"></div>
-    <button class="btn-primary" onclick="handleUserAuth()">Continue with Email</button>
-    <button class="btn-secondary" id="toggleAuthMode" onclick="toggleAuthMode()">New here? Create Account</button>
-    <button class="btn-secondary" onclick="closeAuthModal()">Cancel</button>
-    <div class="msg" id="authMsg"></div>
-  </div>
 </div>
 
 <div class="modal-overlay" id="adminModal">
@@ -347,9 +320,6 @@
   </button>
   <button onclick="document.getElementById('gameGridContainer').scrollIntoView({behavior:'smooth'})">
     <span class="icon">🕹️</span>Games
-  </button>
-  <button onclick="openAuthModal()">
-    <span class="icon">👤</span>Account
   </button>
 </div>
 
@@ -372,80 +342,10 @@
   };
 
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
+  const auth = firebase.auth(); // still used for admin login only
   const db = firebase.firestore();
-  let currentUser = null;
-  let isRegistering = false;
-
-  // FIX: force LOCAL persistence explicitly, so login survives closing the browser/tab
-  // and reopening it (default is already LOCAL, but setting it explicitly avoids any
-  // ambiguity and catches cases where a previous session left SESSION/NONE persistence set).
-  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(err => console.error('Persistence error', err));
 
   function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str == null ? '' : String(str); return d.innerHTML; }
-
-  // No coins field anymore — user doc sirf email store karta hai (login tracking ke liye)
-  function ensureUserDoc(user) {
-    const userRef = db.collection('users').doc(user.uid);
-    return userRef.get().then(doc => {
-      if (doc.exists) return;
-      return userRef.set({ email: user.email });
-    });
-  }
-
-  auth.onAuthStateChanged(user => {
-    currentUser = user;
-    const authBtn = document.getElementById('authNavBtn');
-    authBtn.textContent = user ? 'LOGOUT' : 'LOGIN';
-  });
-
-  // FIX: mobile browsers (Chrome mobile especially) often block/break signInWithPopup
-  // (third-party cookie partitioning, popup blockers). signInWithRedirect + getRedirectResult
-  // works reliably on mobile because it does a full-page navigation instead of a popup.
-  // Show a spinner immediately if we're returning from a Google redirect sign-in,
-  // so the screen doesn't look frozen while Firebase processes the result (especially on slow networks).
-  if (sessionStorage.getItem('googleRedirectPending') === '1') {
-    document.getElementById('loadingOverlay').classList.add('show');
-  }
-
-  auth.getRedirectResult().then(result => {
-    if (result && result.user) {
-      return ensureUserDoc(result.user).then(() => {
-        closeAuthModal();
-      });
-    }
-  }).catch(err => { if (err && err.message) alert(err.message); })
-    .finally(() => {
-      sessionStorage.removeItem('googleRedirectPending');
-      document.getElementById('loadingOverlay').classList.remove('show');
-    });
-
-  function openAuthModal() { if (currentUser) { auth.signOut(); return; } document.getElementById('authModal').classList.add('show'); }
-  function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); }
-
-  function toggleAuthMode() {
-    isRegistering = !isRegistering;
-    document.getElementById('authTitle').textContent = isRegistering ? 'Create Account' : 'User Login';
-    document.getElementById('toggleAuthMode').textContent = isRegistering ? 'Existing user? Login here' : 'New here? Create Account';
-  }
-
-  function loginWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    sessionStorage.setItem('googleRedirectPending', '1');
-    auth.signInWithRedirect(provider); // page reloads; result handled by getRedirectResult above
-  }
-
-  function handleUserAuth() {
-    const email = document.getElementById('userEmail').value.trim();
-    const pass = document.getElementById('userPassword').value;
-    const msg = document.getElementById('authMsg');
-    msg.textContent = 'Processing...'; msg.className = 'msg';
-
-    const promise = isRegistering ? auth.createUserWithEmailAndPassword(email, pass) : auth.signInWithEmailAndPassword(email, pass);
-    promise.then(cred => ensureUserDoc(cred.user)).then(() => {
-      closeAuthModal();
-    }).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
-  }
 
   const gameGrid = document.getElementById('gameGrid');
   const emptyState = document.getElementById('emptyState');
@@ -467,7 +367,6 @@
   }
 
   function openGame(name, content) {
-    if (!currentUser) { alert("You must be logged in to play games!"); openAuthModal(); return; }
     document.getElementById('playTitle').textContent = name;
     document.getElementById('playFrame').srcdoc = content;
     document.getElementById('playModal').classList.add('show');
@@ -524,7 +423,6 @@
       <h2>Admin Dashboard</h2>
       <button class="btn-primary" onclick="renderUploadSection()" style="margin-bottom:8px;">Upload Game</button>
       <button class="btn-primary" onclick="renderManageGamesSection()" style="margin-bottom:8px; background:linear-gradient(90deg, #ff9f0a, #ffb703);">Manage / Delete Games</button>
-      <button class="btn-primary" onclick="renderAllUsersSection()" style="margin-bottom:8px; background:linear-gradient(90deg, #60efff, #00ff87); color:#000;">View Registered Users</button>
       <button class="btn-secondary" onclick="auth.signOut(); adminModal.classList.remove('show');">Log Out</button>
       <button class="btn-secondary" onclick="adminModal.classList.remove('show')">Close</button>
     `;
@@ -731,26 +629,6 @@
         renderManageGamesSection();
       }).catch(err => alert("Error: " + err.message));
     }
-  }
-
-  function renderAllUsersSection() {
-    adminBoxContent.innerHTML = `
-      <h2>Registered Users</h2>
-      <div id="usersListAdmin" style="max-height: 220px; overflow-y: auto; margin-bottom: 12px; font-size:0.75rem;">Loading...</div>
-      <button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>
-    `;
-    db.collection('users').get().then(snapshot => {
-      const list = document.getElementById('usersListAdmin');
-      if (snapshot.empty) { list.innerHTML = '<p style="color:var(--muted);">No users registered yet.</p>'; return; }
-      list.innerHTML = '';
-      snapshot.forEach(doc => {
-        const u = doc.data();
-        const div = document.createElement('div');
-        div.style.cssText = "background:var(--bg2); padding:8px 10px; border-radius:6px; margin-bottom:6px;";
-        div.innerHTML = `<b>Email:</b> ${escapeHtml(u.email || 'N/A')}`;
-        list.appendChild(div);
-      });
-    });
   }
 
   loadGames();
