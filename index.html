@@ -359,7 +359,8 @@
         const card = document.createElement('div');
         card.className = 'game-card';
         let thumbContent = g.image ? `<div class="thumb" style="background-image: url('${g.image}');"></div>` : `<div class="thumb">🕹️</div>`;
-        card.innerHTML = `${thumbContent}<div class="info"><h3>${escapeHtml(g.name)}</h3><p>Play Now</p></div>`;
+        const desc = g.description ? escapeHtml(g.description) : 'Play Now';
+        card.innerHTML = `${thumbContent}<div class="info"><h3>${escapeHtml(g.name)}</h3><p>${desc}</p></div>`;
         card.addEventListener('click', () => openGame(g.name, g.content));
         gameGrid.appendChild(card);
       });
@@ -432,6 +433,7 @@
     adminBoxContent.innerHTML = `
       <h2>Upload Game</h2>
       <div class="field"><label>Game Name</label><input type="text" id="gameName"></div>
+      <div class="field"><label>Description (2-3 lines, for players & SEO)</label><textarea id="gameDescription" rows="3" style="width:100%; background:var(--bg2); border:1px solid var(--card-border); color:var(--text); padding:9px; border-radius:8px; font-size:0.8rem; font-family:inherit;" placeholder="e.g. A fast-paced runner game where you dodge obstacles and collect coins across 3 lanes."></textarea></div>
       <div class="field"><label>Game Photo (Thumbnail)</label><input type="file" id="gameImage" accept="image/*"></div>
       <div class="field"><label>Game File (.html or .zip)</label><input type="file" id="gameFile" accept=".html,.zip"></div>
       <p style="font-size:0.65rem; color:var(--muted); margin-bottom:8px;">ZIP mein ek index.html hona chahiye jismein CSS/JS/images relative paths (jaise src="game.js") se link ho. Total size ~900KB se kam rakho.</p>
@@ -567,6 +569,7 @@
     const file = document.getElementById('gameFile').files[0];
     const imageFile = document.getElementById('gameImage').files[0];
     const gameName = document.getElementById('gameName').value;
+    const gameDescription = document.getElementById('gameDescription').value.trim();
     const msg = document.getElementById('admMsg');
     if (!file || !gameName) { msg.textContent = "Name and game file required."; msg.className = 'msg error'; return; }
 
@@ -578,7 +581,7 @@
         msg.className = 'msg error';
         return;
       }
-      db.collection('games').add({ name: gameName, content: htmlContent, image: imageBase64, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
+      db.collection('games').add({ name: gameName, description: gameDescription, content: htmlContent, image: imageBase64, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
       .then(() => { loadGames(); renderAdminDashboard(); }).catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
     };
 
@@ -613,11 +616,36 @@
       snapshot.forEach(doc => {
         const g = doc.data();
         const div = document.createElement('div');
-        div.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:var(--bg2); padding:8px 10px; border-radius:6px; margin-bottom:6px;";
-        div.innerHTML = `<span>${escapeHtml(g.name)}</span><button style="background:#ff6b6b; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Delete</button>`;
-        div.querySelector('button').addEventListener('click', () => deleteGame(doc.id));
+        div.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:var(--bg2); padding:8px 10px; border-radius:6px; margin-bottom:6px; gap:6px;";
+        div.innerHTML = `<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(g.name)}</span>
+          <button class="editBtn" style="background:#60efff; color:#000; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; flex-shrink:0;">Edit</button>
+          <button class="delBtn" style="background:#ff6b6b; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; flex-shrink:0;">Delete</button>`;
+        div.querySelector('.editBtn').addEventListener('click', () => renderEditDescriptionSection(doc.id, g.name, g.description || ''));
+        div.querySelector('.delBtn').addEventListener('click', () => deleteGame(doc.id));
         list.appendChild(div);
       });
+    });
+  }
+
+  // Lets the admin add/update a game's description without re-uploading the whole game file —
+  // useful for adding descriptions to games that were already uploaded before this field existed.
+  function renderEditDescriptionSection(gameId, gameName, currentDescription) {
+    adminBoxContent.innerHTML = `
+      <h2>Edit Description</h2>
+      <p style="font-size:0.75rem; color:var(--muted); margin-bottom:8px;">${escapeHtml(gameName)}</p>
+      <div class="field"><label>Description</label><textarea id="editDescInput" rows="4" style="width:100%; background:var(--bg2); border:1px solid var(--card-border); color:var(--text); padding:9px; border-radius:8px; font-size:0.8rem; font-family:inherit;"></textarea></div>
+      <button class="btn-primary" id="saveDescBtn">Save</button>
+      <button class="btn-secondary" onclick="renderManageGamesSection()">Back</button>
+      <div class="msg" id="editDescMsg"></div>
+    `;
+    document.getElementById('editDescInput').value = currentDescription;
+    document.getElementById('saveDescBtn').addEventListener('click', () => {
+      const newDesc = document.getElementById('editDescInput').value.trim();
+      const msg = document.getElementById('editDescMsg');
+      msg.textContent = 'Saving...'; msg.className = 'msg';
+      db.collection('games').doc(gameId).update({ description: newDesc })
+        .then(() => { loadGames(); renderManageGamesSection(); })
+        .catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
     });
   }
 
