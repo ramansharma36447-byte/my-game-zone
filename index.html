@@ -310,8 +310,121 @@
 </div>
 
 <footer>PixelForge — games run entirely in your browser.
+  <div style="margin-top:10px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+    <button onclick="openInfoModal('aboutModal')" style="background:none; border:none; color:var(--muted); font-size:0.65rem; text-decoration:underline; cursor:pointer; padding:0;">About Us</button>
+    <button onclick="openInfoModal('contactModal')" style="background:none; border:none; color:var(--muted); font-size:0.65rem; text-decoration:underline; cursor:pointer; padding:0;">Contact</button>
+    <button onclick="openInfoModal('privacyModal')" style="background:none; border:none; color:var(--muted); font-size:0.65rem; text-decoration:underline; cursor:pointer; padding:0;">Privacy Policy</button>
+    <button onclick="openInfoModal('termsModal')" style="background:none; border:none; color:var(--muted); font-size:0.65rem; text-decoration:underline; cursor:pointer; padding:0;">Terms & Conditions</button>
+  </div>
   <span id="secretSpot" style="display:inline-block; width:40px; height:40px; vertical-align:middle;"></span>
 </footer>
+
+<!-- ===== INFO PAGES (About/Contact/Privacy/Terms) — shown as in-page modals, same as
+     the admin panel, so the whole site stays one single file/page. ===== -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal-box" style="max-width:600px; max-height:85vh; overflow-y:auto; text-align:left;">
+    <h2 class="pixel" style="font-size:0.9rem; color:var(--amber); margin-bottom:14px;">About Us</h2>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">PixelForge is a free, instant-play browser games platform. Our goal is simple: give people a place to jump straight into a game — no downloads, no installs, no sign-ups — just tap and play, right from your phone or computer's browser.</p>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;"><strong>What we offer:</strong> A growing library of casual browser games across genres — arcade, racing, puzzle, and more — all playable directly on this website.</p>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;"><strong>Our Mission:</strong> We believe casual gaming should be effortless. Every game on PixelForge is chosen or built to load quickly and run smoothly on ordinary mobile networks, so anyone with a browser can play without friction.</p>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;"><strong>Who Runs PixelForge:</strong> PixelForge is an independently run games website, built and maintained by a small team focused on curating and creating enjoyable, lightweight browser games.</p>
+    <button class="btn-secondary" onclick="closeInfoModal('aboutModal')">Close</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="contactModal">
+  <div class="modal-box" style="max-width:600px; max-height:85vh; overflow-y:auto; text-align:left;">
+    <h2 class="pixel" style="font-size:0.9rem; color:var(--amber); margin-bottom:14px;">Contact Us</h2>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">Got a question, found a broken game, want to report a bug, or have a suggestion for PixelForge? We'd love to hear from you — just send us an email.</p>
+    <div style="background:var(--bg2); border:1px solid var(--card-border); border-radius:12px; padding:16px; text-align:center; margin:16px 0;">
+      <div style="font-size:1.6rem; margin-bottom:8px;">✉️</div>
+      <p style="font-size:0.75rem; margin-bottom:4px;">Email us at:</p>
+      <div style="font-size:0.95rem; color:var(--amber); font-weight:700; word-break:break-all;">pixelforgecontact@gmail.com</div>
+    </div>
+    <p style="font-size:0.75rem; color:var(--muted); margin-bottom:12px;">(Replace this with your actual support email before publishing.)</p>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">For copyright or content-removal requests, please include the game name and a description of the issue so we can look into it promptly.</p>
+    <button class="btn-secondary" onclick="closeInfoModal('contactModal')">Close</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal-box" style="max-width:600px; max-height:85vh; overflow-y:auto; text-align:left;">
+    <h2 class="pixel" style="font-size:0.9rem; color:var(--amber); margin-bottom:6px;">Privacy Policy</h2>
+    <p style="font-size:0.7rem; color:var(--muted); margin-bottom:16px;">Last updated: September 2026</p>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">This Privacy Policy explains how PixelForge ("we", "us", "our") handles information when you visit and use this website. By using PixelForge, you agree to the practices described below.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">1. Information We Collect</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:8px;">PixelForge does not currently require account creation or login, so we do not collect personal information like your name or email address directly. Standard technical information is collected automatically, including:</p>
+    <ul style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; padding-left:20px; margin-bottom:12px;">
+      <li>Browser type and device information</li>
+      <li>IP address and general location (country/region level)</li>
+      <li>Pages visited and games played, and time spent on the site</li>
+      <li>Cookies and similar tracking technologies</li>
+    </ul>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">2. Cookies & Third-Party Advertising</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">We use (or plan to use) Google AdSense and/or Google Analytics to serve ads and understand site usage. Google and its partners may use cookies — including the DoubleClick cookie — to serve ads based on your prior visits. You can opt out of personalized advertising via <a href="https://adssettings.google.com" target="_blank" rel="noopener" style="color:var(--amber);">Google Ads Settings</a>, or via <a href="https://www.aboutads.info" target="_blank" rel="noopener" style="color:var(--amber);">www.aboutads.info</a>.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">3. How We Use Information</h3>
+    <ul style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; padding-left:20px; margin-bottom:12px;">
+      <li>To operate, maintain, and improve the website</li>
+      <li>To display relevant advertising</li>
+      <li>To understand which games and features are popular</li>
+      <li>To detect and prevent technical issues or abuse</li>
+    </ul>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">4. Data Sharing</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">We do not sell your personal information. Aggregated or anonymized usage data may be shared with service providers (such as Google, for analytics and advertising) who process it according to their own privacy policies.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">5. Embedded Third-Party Games</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">Some games on PixelForge are embedded from third-party game platforms. When you play these games, you may be interacting with that third party's servers directly, and their own privacy practices may apply.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">6. Children's Privacy</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">PixelForge is not directed at children under 13, and we do not knowingly collect personal information from children.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">7. Changes to This Policy</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">We may update this Privacy Policy from time to time. Changes will be posted here with an updated "Last updated" date.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">8. Contact Us</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">Questions about this Privacy Policy? Reach out via our Contact section.</p>
+
+    <button class="btn-secondary" onclick="closeInfoModal('privacyModal')">Close</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="termsModal">
+  <div class="modal-box" style="max-width:600px; max-height:85vh; overflow-y:auto; text-align:left;">
+    <h2 class="pixel" style="font-size:0.9rem; color:var(--amber); margin-bottom:6px;">Terms & Conditions</h2>
+    <p style="font-size:0.7rem; color:var(--muted); margin-bottom:16px;">Last updated: September 2026</p>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">By accessing or using PixelForge ("the website", "we", "us"), you agree to be bound by these Terms & Conditions. If you do not agree, please do not use this website.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">1. Use of the Website</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">PixelForge provides free, casual browser games for entertainment purposes only. You agree to use the website lawfully and not to attempt to disrupt, hack, or misuse it in any way.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">2. Intellectual Property</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">Games on PixelForge are either created by us or licensed/embedded from third-party sources. All trademarks, game titles, and content remain the property of their respective owners. You may not copy, redistribute, or republish any game or content from this site without permission.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">3. Third-Party & Embedded Content</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">Some games are embedded from third-party platforms and run on their servers. We do not control, and are not responsible for, the availability, content, or behavior of these third-party games.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">4. No Warranty</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">PixelForge is provided "as is" without warranties of any kind. We do not guarantee that the website or any game will be uninterrupted, error-free, or available at all times.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">5. Limitation of Liability</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">To the fullest extent permitted by law, PixelForge and its operators shall not be liable for any indirect, incidental, or consequential damages arising from your use of this website.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">6. Advertising</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">This website may display advertisements, including those served by Google AdSense. We are not responsible for the content of third-party advertisements.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">7. Changes to These Terms</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">We may update these Terms & Conditions at any time. Continued use of the website after changes are posted constitutes acceptance of the revised terms.</p>
+
+    <h3 style="font-size:0.85rem; color:var(--magenta); margin:18px 0 8px;">8. Contact</h3>
+    <p style="font-size:0.8rem; line-height:1.7; color:#ddd3ff; margin-bottom:12px;">Questions about these Terms? Reach out via our Contact section.</p>
+
+    <button class="btn-secondary" onclick="closeInfoModal('termsModal')">Close</button>
+  </div>
+</div>
 
 <!-- ===== SEPARATE BOTTOM NAV BAR (games ke liye) ===== -->
 <div class="bottom-nav">
@@ -361,15 +474,24 @@
         let thumbContent = g.image ? `<div class="thumb" style="background-image: url('${g.image}');"></div>` : `<div class="thumb">🕹️</div>`;
         const desc = g.description ? escapeHtml(g.description) : 'Play Now';
         card.innerHTML = `${thumbContent}<div class="info"><h3>${escapeHtml(g.name)}</h3><p>${desc}</p></div>`;
-        card.addEventListener('click', () => openGame(g.name, g.content));
+        // Embed-type games (from third-party sites like GameDistribution) open via iframe src;
+        // uploaded games (html/zip) open via srcdoc — openGame() handles both.
+        card.addEventListener('click', () => openGame(g.name, g.content, g.embedUrl));
         gameGrid.appendChild(card);
       });
     });
   }
 
-  function openGame(name, content) {
+  function openGame(name, content, embedUrl) {
     document.getElementById('playTitle').textContent = name;
-    document.getElementById('playFrame').srcdoc = content;
+    const frame = document.getElementById('playFrame');
+    if (embedUrl) {
+      frame.removeAttribute('srcdoc');
+      frame.src = embedUrl;
+    } else {
+      frame.removeAttribute('src');
+      frame.srcdoc = content;
+    }
     document.getElementById('playModal').classList.add('show');
     document.querySelector('.bottom-nav').style.display = 'none'; // fully hide site nav while playing
     document.body.style.overflow = 'hidden';
@@ -377,7 +499,9 @@
 
   function closePlayModal() {
     document.getElementById('playModal').classList.remove('show');
-    document.getElementById('playFrame').removeAttribute('srcdoc');
+    const frame = document.getElementById('playFrame');
+    frame.removeAttribute('srcdoc');
+    frame.removeAttribute('src');
     document.querySelector('.bottom-nav').style.display = '';
     document.body.style.overflow = '';
   }
@@ -423,6 +547,7 @@
     adminBoxContent.innerHTML = `
       <h2>Admin Dashboard</h2>
       <button class="btn-primary" onclick="renderUploadSection()" style="margin-bottom:8px;">Upload Game</button>
+      <button class="btn-primary" onclick="renderEmbedSection()" style="margin-bottom:8px; background:linear-gradient(90deg, #60efff, #a78bfa);">Add Embed Game (URL)</button>
       <button class="btn-primary" onclick="renderManageGamesSection()" style="margin-bottom:8px; background:linear-gradient(90deg, #ff9f0a, #ffb703);">Manage / Delete Games</button>
       <button class="btn-secondary" onclick="auth.signOut(); adminModal.classList.remove('show');">Log Out</button>
       <button class="btn-secondary" onclick="adminModal.classList.remove('show')">Close</button>
@@ -441,6 +566,62 @@
       <button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>
       <div class="msg" id="admMsg"></div>
     `;
+  }
+
+  // Adds a game that actually runs on a third-party site (e.g. GameDistribution) — only a
+  // small embed URL is stored in Firestore, not the game itself. Opens via iframe src instead
+  // of srcdoc. NOTE: ads/revenue and uptime for these games belong to the third-party site, not
+  // this website's own AdSense — see earlier discussion.
+  function renderEmbedSection() {
+    adminBoxContent.innerHTML = `
+      <h2>Add Embed Game</h2>
+      <div class="field"><label>Game Name</label><input type="text" id="embedName"></div>
+      <div class="field"><label>Description (2-3 lines)</label><textarea id="embedDescription" rows="3" style="width:100%; background:var(--bg2); border:1px solid var(--card-border); color:var(--text); padding:9px; border-radius:8px; font-size:0.8rem; font-family:inherit;"></textarea></div>
+      <div class="field"><label>Game Photo (Thumbnail)</label><input type="file" id="embedImage" accept="image/*"></div>
+      <div class="field"><label>Embed URL or &lt;iframe&gt; code</label><input type="text" id="embedUrlInput" placeholder="https://html5.gamedistribution.com/... OR paste full <iframe src=...></iframe> code"></div>
+      <p style="font-size:0.65rem; color:var(--muted); margin-bottom:8px;">Paste either the direct game URL, or the whole embed &lt;iframe&gt; snippet the game site gave you — either works, the src is extracted automatically.</p>
+      <button class="btn-primary" onclick="addEmbedGame()">Publish</button>
+      <button class="btn-secondary" onclick="renderAdminDashboard()">Back</button>
+      <div class="msg" id="embedMsg"></div>
+    `;
+  }
+
+  function addEmbedGame() {
+    const name = document.getElementById('embedName').value.trim();
+    const description = document.getElementById('embedDescription').value.trim();
+    const imageFile = document.getElementById('embedImage').files[0];
+    const rawInput = document.getElementById('embedUrlInput').value.trim();
+    const msg = document.getElementById('embedMsg');
+    if (!name || !rawInput) { msg.textContent = "Name and Embed URL/code required."; msg.className = 'msg error'; return; }
+
+    // If a full <iframe> snippet was pasted, pull just the src="..." out of it; otherwise
+    // treat the whole input as a direct URL.
+    let embedUrl = rawInput;
+    const srcMatch = rawInput.match(/src\s*=\s*["']([^"']+)["']/i);
+    if (srcMatch) embedUrl = srcMatch[1];
+
+    if (!/^https?:\/\//i.test(embedUrl)) {
+      msg.textContent = "Doesn't look like a valid http(s) URL.";
+      msg.className = 'msg error';
+      return;
+    }
+
+    msg.textContent = 'Saving...';
+    const save = (imageBase64) => {
+      db.collection('games').add({
+        name, description, embedUrl, image: imageBase64,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => { loadGames(); renderAdminDashboard(); })
+        .catch(err => { msg.textContent = err.message; msg.className = 'msg error'; });
+    };
+
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.onload = e => save(e.target.result);
+      reader.readAsDataURL(imageFile);
+    } else {
+      save(null);
+    }
   }
 
   // Resolves a relative path like "img/x.png" against the folder of the current file inside the zip.
@@ -694,6 +875,11 @@
       document.getElementById('installNavBtn').style.display = 'none';
     });
   }
+
+  // Opens/closes the About/Contact/Privacy/Terms footer pages — shown as an in-page
+  // modal (same pattern as the admin panel) so the whole site stays one single file.
+  function openInfoModal(id) { document.getElementById(id).classList.add('show'); }
+  function closeInfoModal(id) { document.getElementById(id).classList.remove('show'); }
 </script>
 </body>
 </html>
