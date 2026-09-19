@@ -280,7 +280,7 @@
 <body>
 
 <nav>
-  <div class="logo pixel"><div class="cart"></div>Pixel<span>Forge</span></div>
+  <div class="logo pixel" id="logoTapSpot"><div class="cart"></div>Pixel<span>Forge</span></div>
   <div class="nav-right">
     <button class="auth-btn pixel" id="installNavBtn" onclick="triggerInstallPrompt()" style="display:none;">Install</button>
   </div>
@@ -316,7 +316,7 @@
     <button onclick="openInfoModal('privacyModal')" style="background:none; border:none; color:var(--muted); font-size:0.65rem; text-decoration:underline; cursor:pointer; padding:0;">Privacy Policy</button>
     <button onclick="openInfoModal('termsModal')" style="background:none; border:none; color:var(--muted); font-size:0.65rem; text-decoration:underline; cursor:pointer; padding:0;">Terms & Conditions</button>
   </div>
-  <span id="secretSpot" style="display:inline-block; width:40px; height:40px; vertical-align:middle;"></span>
+  <span id="secretSpot" style="display:none;"></span>
 </footer>
 
 <!-- ===== INFO PAGES (About/Contact/Privacy/Terms) — shown as in-page modals, same as
@@ -511,11 +511,11 @@
   const adminBoxContent = document.getElementById('adminBoxContent');
   let secretTapCount = 0, secretTapTimer = null;
 
-  document.getElementById('secretSpot').addEventListener('click', () => {
+  document.getElementById('logoTapSpot').addEventListener('click', () => {
     secretTapCount++;
     if (secretTapTimer) clearTimeout(secretTapTimer);
     secretTapTimer = setTimeout(() => { secretTapCount = 0; }, 2000);
-    if (secretTapCount >= 3) { secretTapCount = 0; adminModal.classList.add('show'); renderAdminModal(); }
+    if (secretTapCount >= 5) { secretTapCount = 0; adminModal.classList.add('show'); renderAdminModal(); }
   });
   adminModal.addEventListener('click', (e) => { if (e.target === adminModal) adminModal.classList.remove('show'); });
 
